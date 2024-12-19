@@ -3,15 +3,19 @@
 
 ## Game Specific
 
-* As an administrator,  I want to ensure the game uses a standard deck of 52 cards, so that the game is fair and follows traditional blackjack rules.
+* As a dealer,  I want to ensure the game uses a standard deck of 52 cards, so that the game is fair and follows traditional blackjack rules.
+
+* As a dealer, I want to have an unlimited amount  of money, so that the player can play as long as they want.
 
 * As a player, I want to start a new game, so that I can play Blackjack without previous game interference.
 
 * As a player, I want to have a reset button at any point in the game.
 
-* As a player, I want to be able to 'cash out' to the top players leaderboard, once i have decided to stop playing the game entirely.
+* As a player, I want to be able to 'cash out' my total money to the top players leaderboard, once i have decided to stop playing the game entirely.
 
 * As a player, I want to be able to see my total money throughout the entire game.
+
+* The leaderboard will NOT reset at any point at all.
 
 
 ## Round/Hand Specific
