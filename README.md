@@ -109,14 +109,18 @@ The goal of Blackjack is to beat the dealer's hand without going over 21. Player
 - [ ] **Step 6**: Continued Testing, Debugging, and Optimization
 1. Continue detailed testing across all game functions. (JS, HTML)
 2. Optimize performance and enhance UI (only if ahead of schedule) (HTML, CSS)
+3. Finalize leaderboard integration and ensure it functions across sessions.
 
-- [ ] **Step 7**: 
-
-### Final Review & Launch Preparation
+- [ ] **Step 7**: Final Review & Launch Preparation
+1. Conduct final playtests, possibly with external testers.
+2. Make last-minute adjustments based on feedback.
+3. Prepare and execute game launch.
 
 </br>
 
+
 # Key Learnings
+
 
 # Summary
 
