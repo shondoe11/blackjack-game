@@ -29,8 +29,12 @@ At its core, Blackjack is a betting game. Each player places a bet before the ca
 ### Conclusion
 Blackjack continues to be a staple in both online and land-based casinos due to its strategic gameplay and the appeal of being able to beat the house with skill rather than pure luck. Whether you are a casual player or a serious strategist, Blackjack offers a thrilling casino experience for all appropriate ages.
 
+<br>
+
 ## Deployment
 The game will be deployed on GitHub pages, and the link will be provided in this section once launched.
+
+</br>
 
 ## How To Play Classic Blackjack: A Guide for Players
 ### Objective
@@ -73,35 +77,44 @@ The goal of Blackjack is to beat the dealer's hand without going over 21. Player
 - The top 10 player scores are displayed on the leaderboard.
 - Names and scores are cached indefinitely, unless displaced by higher scores.
 
+<br>
+
 ## Development
 ### Initial Timeline
 - [ ] **Step 1**: Generate Standard 52 Card Deck and Game Setup (JS)
 1. Develop the functionality to create and shuffle a 52-card deck. (JS)
 2. Initialize player settings (money, name input) and set up betting parameters. (JS)
-[Step 1 Timeline: 2 days]
+* [Step 1 Timeline: 2 days]
 
 - [ ] **Step 2**: Develop User Interface
 1. Design and implement the main game interface. (HTML, CSS)
 2. Create buttons and displays for player actions, bets, and card handling. (HTML, CSS)
-[Step 2 Timeline: 2 days]
+* [Step 2 Timeline: 2 days]
 
 - [ ] **Step 3**: Implement Betting Mechanics and Gameplay Mechanics
 1. Code the betting functions (including placing and adjusting bets). (JS)
 2. Implement 'Hit', 'Stand', and basic dealer gameplay logic. (JS)
-[Step 3 Timeline: 2 days]
+* [Step 3 Timeline: 2 days]
 
 - [ ] **Step 4**: Integrate Betting Rules and Leaderboard Development
 1. Incorporate all special betting rules and payouts into the game logic. (JS)
 2. Develop the leaderboard to track and display top scores. (JS, HTML, CSS)
-[Step 4 Timeline: 2 days]
+* [Step 4 Timeline: 2 days]
 
+- [ ] **Step 5**: Testing & Debugging (Initial Phase)
+1. Conduct initial testing to identify major bugs and gameplay issues. (JS, HTML)
+2. Start fixing critical bugs as they are identified. (JS, HTML)
+* [Step 5 Timeline: 2 days]
 
-### Testing & Debugging (Initial Phase)
+- [ ] **Step 6**: Continued Testing, Debugging, and Optimization
+1. Continue detailed testing across all game functions. (JS, HTML)
+2. Optimize performance and enhance UI (only if ahead of schedule) (HTML, CSS)
 
-### Continued Testing, Debugging, and Optimization
+- [ ] **Step 7**: 
 
 ### Final Review & Launch Preparation
 
+</br>
 
 # Key Learnings
 
