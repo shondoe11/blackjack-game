@@ -75,19 +75,19 @@ The goal of Blackjack is to beat the dealer's hand without going over 21. Player
 
 ## Development
 ### Initial Timeline
-[] Step 1: Generate Standard 52 Card Deck and Game Setup (JS)
+[ ] Step 1: Generate Standard 52 Card Deck and Game Setup (JS)
 - Develop the functionality to create and shuffle a 52-card deck. (JS)
 - Initialize player settings (money, name input) and set up betting parameters. (JS)
 - [Step 1 Timeline: 2 days]
-[] Step 2: Develop User Interface
+[ ] Step 2: Develop User Interface
 - Design and implement the main game interface. (HTML & CSS)
 - Create buttons and displays for player actions, bets, and card handling. (HTML & CSS)
 - [Step 2 Timeline: 2 days]
-[] Step 3: Implement Betting Mechanics and Gameplay Mechanics
+[ ] Step 3: Implement Betting Mechanics and Gameplay Mechanics
 - Code the betting functions (including placing and adjusting bets). (JS)
 - Implement 'Hit', 'Stand', and basic dealer gameplay logic. (JS)
 - [Step 3 Timeline: 2 days]
-[] Step 4: Integrate Betting Rules and Leaderboard Development
+[ ] Step 4: Integrate Betting Rules and Leaderboard Development
 - Incorporate all special betting rules and payouts into the game logic.
 - Develop the leaderboard to track and display top scores.
 - [Step 4 Timeline: 2 days]
