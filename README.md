@@ -1,4 +1,4 @@
-# DEVELOPING a Card Game: Blackjack
+# Developing a Card Game: Blackjack
 
 ## Project Brief
 **MVP - Minimum Viable Product**
@@ -20,8 +20,8 @@
 - Git + GitHub
 
 ## Description
-### Origins
-Blackjack, also known as 21, is a classic card game that has its roots in the casinos of France in the 1700s, where it was originally called "Vingt-et-Un" (French for twenty-one). The game made its way to America in the 18th century, where it became an instant favorite in illegal gambling dens. It wasn't until Nevada legalized gambling in 1931 that Blackjack found a legitimate and permanent home in casinos.
+Origins
+<p>Blackjack, also known as 21, is a classic card game that has its roots in the casinos of France in the 1700s, where it was originally called "Vingt-et-Un" (French for twenty-one). The game made its way to America in the 18th century, where it became an instant favorite in illegal gambling dens. It wasn't until Nevada legalized gambling in 1931 that Blackjack found a legitimate and permanent home in casinos.</p>
 ### Gameplay
 The objective of Blackjack is simple: to beat the dealer's hand without going over 21. Each player starts with two cards, one of the dealer’s cards is hidden until the end of the round. Players can choose to receive additional cards (hit) or stick with their current total (stand). The key decisions in Blackjack involve when to hit, stand, and sometimes surrender.
 ### Betting and Winning
