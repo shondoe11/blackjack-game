@@ -141,10 +141,10 @@ The goal of Blackjack is to beat the dealer's hand without going over 21. Player
 </br>
 
 
-# Key Learnings
+## Key Learnings
 
 
-# Summary
+## Summary
 
 
 
