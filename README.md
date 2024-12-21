@@ -70,7 +70,7 @@ The goal of Blackjack is to beat the dealer's hand without going over 21. Player
 - Stand: Players can choose to stop taking additional cards if they are satisfied with their current total or wish to avoid busting.
 - All-In: At any betting opportunity, players can bet all their current money.
 3. Dealer's Play: 
-- After all players have made their decisions, the dealer reveals the hidden card and must hit if the total is 17 or less and stand on totals of 18 or more.
+- After all players have made their decisions, the dealer reveals the hidden card and must hit if the total is 16 or less and stand on totals of 17 or more.
 
 ###### Betting Rules
 
