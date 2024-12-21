@@ -6,9 +6,8 @@
 // SET dealer's money as unlimited
 // INITIALIZE each player with $5000
 // SET minimum bet at $50
-// DISPLAY (all)player's money
-//! INITIALIZE leaderboard with caching indefinitely and not resetting
-
+// DISPLAY all player's money
+// INITIALIZE leaderboard with caching indefinitely and not resetting
 
 /* Create and Shuffle Deck */
 
@@ -16,26 +15,25 @@
 // CREATE list of 52 cards
 // SHUFFLE deck
 
-
 /* Game Controls */
 
 // FUNCTION for starting a new game
-//! ASK each player to input their name (HTML form element?)
-// RESET game state (all players)
+// ASK each player to input their name (HTML form element?)
+// RESET game state for all players
 // DEAL initial cards to player(s) and dealer
-// SET each player bet, ensure between minimum and their total money
+// SET each player bet, ensure between minimum and their total money (allow 'All-In')
 // COLLECT bets from each player
 // DEAL initial cards to all players, then the dealer
 
-// FUNCTION to reset game (initial state) (at start new game)
-// UPDATE leaderboard updated with current scores before reset
+// FUNCTION to reset game to initial state (at start new game)
+// UPDATE leaderboard with current scores before reset
 // CLEAR all players and dealer hands
 // RESET deck
-// RESET all player stakes and bets (initial amounts)
+// RESET all player stakes and bets to initial amounts
 // RESET player names, maintaining leaderboard position
 // DISPLAY updated money for each player
 
-// FUNCTION to cashing out to leaderboard
+// FUNCTION for cashing out to leaderboard
 // ADD each player's current money and name to the leaderboard
 // SORT leaderboard to keep top 10 players, discard others
 // DISPLAY leaderboard
@@ -48,24 +46,22 @@
 // RESET money to initial amounts for all players
 // DISPLAY updated money for each player
 
-
 /* Betting Rules Evaluation */
 
 // FUNCTION to apply betting rules
-    // IF dealer does not bust
-        // PAY players with higher total than dealer
-        // COLLECT bets from players with a lower total than dealer
-    // IF both player and dealer bust
-        // PLAYER loses their bet
-    // IF play does not bust and dealer bust
-        // PLAYER wins and bet is paid accordingly
-    // IF tie between player and dealer (standoff)
-        // RETURN bet to player
-    // IF player has a Blackjack
-        // PAY player 1.5 times their bet
-    // IF dealer has a Blackjack
-        // DEALER collects 1.5 times the bet from all players
-
+// IF dealer does not bust
+    // PAY players with a higher total than dealer
+    // COLLECT bets from players with a lower total than dealer
+// IF both player and dealer bust
+    // PLAYER loses their bet
+// IF player does not bust and dealer busts
+    // PLAYER wins and bet is paid accordingly
+// IF tie between player and dealer (standoff)
+    // RETURN bet to player
+// IF player has a Blackjack
+    // PAY player 1.5 times their bet
+// IF dealer has a Blackjack
+    // DEALER collects 1.5 times the bet from all players
 
 /* Game Rounds */
 
@@ -89,13 +85,10 @@
 
 // FUNCTION for dealer's actions
 // REVEAL dealer's hidden card
-// WHILE dealer's score is less than 17
+// WHILE dealer's score is less than 17 OR isSoftSeventeen(dealer.hand)
     // DEAL card to dealer
-// DETERMINE winner for each player based on individual scores
-// APPLY betting rules to determine payouts or collections
-// UPDATE money based on the round's result for each player
-// DISPLAY winner for each round
-
+// IF dealer's score is 17 and not a soft 17 OR dealer's score is higher than 17
+    // DEALER stands
 
 /* Utility Functions */
 
