@@ -111,7 +111,7 @@ The goal of Blackjack is to beat the dealer's hand without going over 21. Player
 
 #### Initial Timeline
 
-- [ x ] **Step 1**: Generate Standard 52 Card Deck and Game Setup (JS)
+- [x] **Step 1**: Generate Standard 52 Card Deck and Game Setup (JS)
 1. Develop the functionality to create and shuffle a 52-card deck. (JS)
 2. Initialize player settings (money, name input) and set up betting parameters. (JS)
 * [Step 1 Timeline: 2 days]
