@@ -3,9 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Blackjack by Shawn</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
+    <header>
+        <h1>Blackjack</h1>
+        <nav>
+            <a href="#about">About</a>
+            <a href="#rules">Rules</a>
+            <a href="leaderboard">Leaderboard</a>
+        </nav>
+    </header>
+    <div id="gameContainer">
+        <section id="dealerArea">
+            <h2>Dealer's Hand: </h2>
+            <div id="dealerCards" class="cards"></div>
+            <div id="dealerScore">Total: </div>
+        </section>
+        <section id="playerArea">
+            <h2>Player's Hand: </h2>
+            <div id="playerCards" class="cards"></div>
+            <div id="playerMoney">Money: $5000</div>
+            <div id="playerScore">Total: </div>
+            <div class="bettingControls">
+                <label for="betAmount">Bet Amount: </label>
+                <input type="number" id="betAmount" value="50" min="50" max="5000">
+                <button id="betButton">Bet</button>
+            </div>
+            <div class="gameControls">
+                <button id="hitButton">Hit</button>
+                <button id="standButton">Stand</button>
+                <button id="cashOutButton">Cash Out</button>
+                <button id="resetButton">Reset</button>
+            </div>
+        </section>
+        <div id="textPromptArea">Game status and messages will appear here FOR NOW.</div>
+    </div>
+    <script src="main.js"></script>
 </body>
 </html>
