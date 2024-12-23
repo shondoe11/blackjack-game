@@ -36,6 +36,14 @@ At its core, Blackjack is a betting game. Each player places a bet before the ca
 
 Blackjack continues to be a staple in both online and land-based casinos due to its strategic gameplay and the appeal of being able to beat the house with skill rather than pure luck. Whether you are a casual player or a serious strategist, Blackjack offers a thrilling casino experience for all appropriate ages.
 
+## Wireframe
+
+![Wireframe-Board.png](./Prep/Wireframe-Board.png)
+
+![Wireframe-Board-Mobile.png](./Prep/Wireframe-Board-Mobile.png)
+
+[Link](https://wireframe.cc/pro/pp/e934692fd853844)
+
 <br>
 
 ## Deployment

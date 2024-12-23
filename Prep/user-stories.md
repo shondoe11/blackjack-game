@@ -9,7 +9,7 @@
 
 * As a dealer, I am controlled by the game and not a human player.
 
-* As a player, I want to start with $5000, with a minimum bet of $50. I should be able to All-In if i wish to, or bet any amount between the minimum bet and all my current money.
+* As a player, I want to start with $5000, with a minimum bet of $50. I should be able to All-In if i wish to, or bet any amount between the minimum bet and all my current money. There is no option to 'Double Down' or 'Split'.
 
 * As a dealer, I want to set some bet rules:
 1. If dealer doesn't bust, dealer will pay the bet of any player with a higher total and collects the bet of any player having a lower total
