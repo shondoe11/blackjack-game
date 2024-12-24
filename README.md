@@ -116,7 +116,7 @@ The goal of Blackjack is to beat the dealer's hand without going over 21. Player
 2. Initialize player settings (money, name input) and set up betting parameters. (JS)
 * [Step 1 Timeline: 2 days]
 
-- [ ] **Step 2**: Develop User Interface
+- [x] **Step 2**: Develop User Interface
 1. Design and implement the main game interface. (HTML, CSS)
 2. Create buttons and displays for player actions, bets, and card handling. (HTML, CSS)
 * [Step 2 Timeline: 2 days]
