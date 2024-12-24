@@ -1,0 +1,184 @@
+body, html {
+    font-family: 'Arial Black', Impact, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: rgb(240, 240, 240);
+    color: #333;
+}
+
+header {
+    background: #333;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 24px;
+}
+
+header nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+header img {
+    height: 120px;
+    width: auto;
+    margin-right: 50px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 10px 20px;
+    margin-top: 80px;
+}
+
+nav a:not(:first-child) {
+    margin-left: 20px;
+}
+
+nav a:not(:last-child) {
+    margin-right: 20px;
+}
+
+#gameContainer {
+    width: 80%;
+    max-width: 1024px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #771d09;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+
+#dealerArea, #playerArea {
+    border: 1px solid #35654d;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+    background: #35654d;
+    color: white;
+}
+
+.cards {
+    display: flex;
+    justify-content: space-around;
+    margin: 10px 0;
+}
+
+.cards div {
+    width: 50px;
+    height: 70px;
+    background: #fff;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: black;
+}
+
+#dealerScore, #playerScore, #playerMoney {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+#textPromptArea {
+    padding: 10px;
+    margin-top: 10px;
+    background: #ddd;
+    text-align: center;
+    border: 3px solid #7378f9;
+    border-radius: 5px;
+}
+
+.controlsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-top: 10px;
+}
+
+.bettingControls, .gameControls {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+    width: 100%;
+    gap: 20px;
+}
+
+.bettingControls label {
+    margin-top: 5px;
+    margin-left: 10px;
+}
+
+.bettingControls input {
+    height: 25px;
+    width: 70px;
+    font-size: 20px;
+    margin-top: 3px;
+}
+
+.bettingControls input {
+    max-width: 100px;
+    border-radius: 5px;
+}
+
+.bettingControls button {
+    font-size: 20px;
+    padding: 10px 13px;
+    border: none;
+    background-color: #FFC107;
+    color: white;
+    border: 1px solid #ffff00;
+    border-radius: 20px;
+    cursor: pointer;
+    width: 100px;
+    transition: background-color 0.3s ease;
+}
+
+.gameControls button {
+    padding: 12px 15px;
+    font-size: 16px;
+    margin-right: 5px;
+    cursor: pointer;
+    border: none;
+    color: white;
+    width: 150px;
+    border-radius: 25px;
+    transition: background-color 0.3s ease;
+}
+
+#hitButton {
+    background-color: #D32F2F;
+}
+
+#standButton {
+    background-color: #1976D2;
+}
+
+#cashOutButton {
+    background-color: #388E3C;
+}
+
+#resetButton {
+    background-color: #616161;
+}
+
+.bettingControls button:hover,
+.gameControls button:not(#resetButton):hover {
+    border: 1.5px solid rgb(115, 255, 255);
+    color: rgb(115, 255, 255);
+}
+
+#about:hover, #rules:hover, #leaderboard:hover {
+    color: #7fffbf;
+}
+
+#resetButton:hover {
+    border: 1.5px solid rgb(255, 0, 0);
+    color: rgb(255, 0, 0);
+}
+

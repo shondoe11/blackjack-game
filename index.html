@@ -8,11 +8,12 @@
 </head>
 <body>
     <header>
-        <h1>Blackjack</h1>
+        
         <nav>
-            <a href="#about">About</a>
-            <a href="#rules">Rules</a>
-            <a href="leaderboard">Leaderboard</a>
+            <a href="#about" id="about">About</a>
+            <a href="#rules" id="rules">Rules</a>
+            <img src="./IMG-assets/blackjack-logo.png" alt="Blackjack logo.png">
+            <a href="#leaderboard" id="leaderboard">Leaderboard</a>
         </nav>
     </header>
     <div id="gameContainer">
@@ -21,6 +22,7 @@
             <div id="dealerCards" class="cards"></div>
             <div id="dealerScore">Total: </div>
         </section>
+        <div id="textPromptArea">Game status and messages will appear here</div>
         <section id="playerArea">
             <h2>Player's Hand: </h2>
             <div id="playerCards" class="cards"></div>
@@ -38,7 +40,6 @@
                 <button id="resetButton">Reset</button>
             </div>
         </section>
-        <div id="textPromptArea">Game status and messages will appear here FOR NOW.</div>
     </div>
     <script src="main.js"></script>
 </body>
