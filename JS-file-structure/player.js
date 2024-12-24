@@ -31,6 +31,10 @@ class Player {
         this.currentBet = betAmount;
         return {success: true, message: `Bet of $${betAmount} placed.`};
     }
+    resetBet() {
+        this.money += this.currentBet; //refund bet
+        this.currentBet = 0;
+    }
 }
 
 /*----------- Event Listeners ----------*/
