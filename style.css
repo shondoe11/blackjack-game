@@ -92,6 +92,7 @@ nav a:not(:last-child) {
     text-align: center;
     border: 3px solid #7378f9;
     border-radius: 5px;
+    font-size: 20px;
 }
 
 .controlsContainer {
@@ -173,6 +174,13 @@ nav a:not(:last-child) {
     color: rgb(115, 255, 255);
 }
 
+.bettingControls button:active,
+.gameControls button:active {
+    background-color: #3e8e41;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
+
 #about:hover, #rules:hover, #leaderboard:hover {
     color: #7fffbf;
 }
@@ -182,3 +190,28 @@ nav a:not(:last-child) {
     color: rgb(255, 0, 0);
 }
 
+#resetButton:hover span {
+    padding-right: 25px;
+}
+
+#resetButton span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+    font-size: 20px;
+}
+
+#resetButton span:after {
+    content: '\00bb';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+}
+
+#resetButton:hover span:after {
+    opacity: 1;
+    right:0;
+}
