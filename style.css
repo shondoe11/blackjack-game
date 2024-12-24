@@ -117,13 +117,9 @@ nav a:not(:last-child) {
 
 .bettingControls input {
     height: 25px;
-    width: 70px;
+    width: 150px;
     font-size: 20px;
     margin-top: 3px;
-}
-
-.bettingControls input {
-    max-width: 100px;
     border-radius: 5px;
 }
 
@@ -190,11 +186,11 @@ nav a:not(:last-child) {
     color: rgb(255, 0, 0);
 }
 
-#resetButton:hover span {
+#cashOutButton:hover span, #resetButton:hover span {
     padding-right: 25px;
 }
 
-#resetButton span {
+#cashOutButton span, #resetButton span {
     cursor: pointer;
     display: inline-block;
     position: relative;
@@ -202,7 +198,7 @@ nav a:not(:last-child) {
     font-size: 20px;
 }
 
-#resetButton span:after {
+#cashOutButton span:after, #resetButton span:after {
     content: '\00bb';
     position: absolute;
     opacity: 0;
@@ -211,7 +207,7 @@ nav a:not(:last-child) {
     transition: 0.5s;
 }
 
-#resetButton:hover span:after {
+#cashOutButton:hover span:after, #resetButton:hover span:after {
     opacity: 1;
     right:0;
 }
