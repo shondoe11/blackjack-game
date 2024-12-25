@@ -121,7 +121,7 @@ The goal of Blackjack is to beat the dealer's hand without going over 21. Player
 2. Create buttons and displays for player actions, bets, and card handling. (HTML, CSS)
 * [Step 2 Timeline: 2 days]
 
-- [ ] **Step 3**: Implement Betting Mechanics and Gameplay Mechanics
+- [x] **Step 3**: Implement Betting Mechanics and Gameplay Mechanics
 1. Code the betting functions (including placing and adjusting bets). (JS)
 2. Implement 'Hit', 'Stand', and basic dealer gameplay logic. (JS)
 * [Step 3 Timeline: 2 days]
