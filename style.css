@@ -211,3 +211,17 @@ nav a:not(:last-child) {
     opacity: 1;
     right:0;
 }
+
+#leaderboardSection {
+    margin: 20px auto;
+    padding: 10px;
+    background-color: #388E3C;
+    border: 1px solid #35654D;
+    border-radius: 5px;
+    color: #FFD700;
+    width: 80%;
+    max-width: 1024px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* style leaderboardList later */
