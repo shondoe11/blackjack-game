@@ -1,6 +1,6 @@
 /*-------------- Constants -------------*/
 
-import Player from './player.js'
+import Player from './player.js';
 
 import {createDeck, shuffleDeck} from './deck.js'; // ES6 modules
 
@@ -16,6 +16,11 @@ let deck = [];
 
 let currentPlayer = null; // tracks current player in game
 
+let dealer = {
+    name: 'Dealer',
+    hand: [],
+};
+
 /*----- Cached Element References  -----*/
 
 const betAmountInput = document.getElementById('betAmount');
@@ -24,9 +29,11 @@ const playerMoneyDisplay = document.getElementById('playerMoney');
 
 const playerScoreDisplay = document.getElementById('playerScore');
 
-const hitButton = document.getElementById('hitButton')
+const hitButton = document.getElementById('hitButton');
 
-const standButton = document.getElementById('standButton')
+const standButton = document.getElementById('standButton');
+
+const textPromptArea = document.getElementById('textPromptArea');
 
 /*-------------- Functions -------------*/
 
@@ -107,7 +114,10 @@ function handleHit() {
 // handle Stand actions
 function handleStand() {
     currentPlayer.isStanding = true;
-    //! add dealer logic if needed later
+    while (calculateScore(dealer.hand) < 17){
+        const newCard = dealCard(dealer.hand);
+        updateHandUI(dealer.hand, 'dealerCards');
+    }
     displayMessage(`You chose to stand. Dealer's turn.`, 'info');
     checkWinner();
 }
@@ -130,17 +140,40 @@ function calculateScore(hand) {
 // Check winner of round
 function checkWinner() {
     const playerScore = calculateScore(currentPlayer.hand);
-    //! Placeholder logic for dealer, implement later
-    const dealerScore = 17; // assume static dealer score for now
+    const dealerScore = calculateScore(dealer.hand);
+    // player blackjack
+    if (playerScore === 21 && currentPlayer.hand.length === 2) {
+        currentPlayer.money += currentPlayer.bet * 2.5; // 3:2 payout
+        displayMessage('Blackjack! Player wins with a 3:2 payout', 'success');
+        endRound();
+        return;
+    } // dealer blackjack
+    if (dealerScore === 21 && dealer.hand.length === 2) {
+        displayMessage('Dealer has Blackjack! Dealer wins this round.', 'error');
+        endRound();
+        return;
+    } // normal win/loss logic
     if (playerScore > 21) {
         displayMessage('Player busts! Dealer wins.', 'error');
     } else if (dealerScore > 21 || playerScore > dealerScore) {
+        currentPlayer.money += currentPlayer.bet * 2; // player win, their bet double
         displayMessage('Player wins this round!', 'success');
     } else if (playerScore === dealerScore) {
-        displayMessage(`It's a tie!`, 'info');
+        currentPlayer.money += currentPlayer.bet; // tie, bet return
+        displayMessage(`It's a tie! Bet returned.`, 'info');
     } else {
         displayMessage('Dealer wins this round!', 'error');
     }
+    endRound();
+}
+
+// end round && reset for the next round
+function endRound() {
+currentPlayer.bet = 0; // reset bet
+currentPlayer.hand = [];
+dealer.hand = [];
+updateUI();
+displayMessage('Round ended. Place your bet to start the next round!', 'info') ;
 }
 
 /*----------- Event Listeners ----------*/
@@ -150,5 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 betAmountInput.addEventListener('change', handleBet);
+
 hitButton.addEventListener('click', handleHit);
+
 standButton.addEventListener('click', handleStand);
