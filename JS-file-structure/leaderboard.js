@@ -8,6 +8,7 @@
 
 // store player rankings
 let leaderboard = [];
+window.leaderboard = leaderboard; //step 5 testing
 
 /*----- Cached Element References  -----*/
 
@@ -17,12 +18,15 @@ let leaderboard = [];
 
 // update leaderboard with player name && money
 function updateLeaderboard(player) {
+    console.log('Updating leaderboard with:', player); // step 5 test 
     // check if player name exists in leaderboard
     const existingPlayer = leaderboard.find(entry => entry.name === player.name);
     if (existingPlayer) {
+        console.log('Updating existing player:', existingPlayer); // step 5 test
         // update player monies
         existingPlayer.money = player.money;
     } else {
+        console.log('Adding new player to leaderboard:', player); // step 5 test
         // add new player to leaderboard
         leaderboard.push({name: player.name, money: player.money});
     }
@@ -33,7 +37,9 @@ function updateLeaderboard(player) {
         leaderboard = leaderboard.slice(0, 10);
     }
     saveLeaderboard(); // save wrapping
+    console.log('Updated leaderboard:', leaderboard); // step 5 debugging
 }
+// console.log('Loaded leaderboard:', leaderboard); //step 5 debugging
 
 // save leaderboard via localStorage
 function saveLeaderboard() {
@@ -45,7 +51,12 @@ function loadLeaderboard() {
     const storedLeaderboard = localStorage.getItem('leaderboard');
     if (storedLeaderboard) {
         leaderboard = JSON.parse(storedLeaderboard);
+        window.leaderboard = leaderboard; //step 5 test
+    } else {
+        leaderboard = []; // Initialize empty array if nothing exists
+        window.leaderboard = leaderboard; // step 5 test
     }
+    console.log('Loaded leaderboard:', leaderboard); // step 5 test
 }
 // call function during game start
 loadLeaderboard();
