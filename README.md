@@ -126,7 +126,7 @@ The goal of Blackjack is to beat the dealer's hand without going over 21. Player
 2. Implement 'Hit', 'Stand', and basic dealer gameplay logic. (JS)
 * [Step 3 Timeline: 2 days]
 
-- [ ] **Step 4**: Integrate Betting Rules and Leaderboard Development
+- [x] **Step 4**: Integrate Betting Rules and Leaderboard Development
 1. Incorporate all special betting rules and payouts into the game logic. (JS)
 2. Develop the leaderboard to track and display top scores. (JS, HTML, CSS)
 * [Step 4 Timeline: 2 days]
