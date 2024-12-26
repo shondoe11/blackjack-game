@@ -4,9 +4,9 @@ import Player from './player.js';
 
 import { createDeck, shuffleDeck } from './deck.js'; // ES6 modules
 
-import  { updateLeaderboard } from './leaderboard.js';
+import  { leaderboard, loadLeaderboard, updateLeaderboard } from './leaderboard.js';
 
-import { renderLeaderboard } from './uiController.js';
+import { updateHandUI, renderLeaderboard } from './uiController.js';
 
 /*-------------- Constants -------------*/
 
@@ -30,6 +30,7 @@ let dealer = {
 /*----- Cached Element References  -----*/
 
 const betAmountInput = document.getElementById('betAmount');
+window.betAmountInput = betAmountInput; // step 5 test betting mechanics
 
 const playerMoneyDisplay = document.getElementById('playerMoney');
 
@@ -43,8 +44,10 @@ const textPromptArea = document.getElementById('textPromptArea');
 
 /*-------------- Functions -------------*/
 
-// start game
-function initializeGame(numPlayers) {
+// start game with preset conditions
+function startGame(numPlayers) {
+    // console.log('startGame called'); // step 5 test gameStart
+    players = [];
     deck = shuffleDeck(createDeck());
     for (let i = 0; i < numPlayers; i++) {
         players.push({
@@ -57,11 +60,17 @@ function initializeGame(numPlayers) {
         });
     }
     currentPlayer = players[0]; // assume 1 player first
+    dealer.hand = [];
+    window.currentPlayer = players[0]; 
+    // console.log('Players:', players); // step 5 test gameStart
+    // console.log('Dealer:', dealer); // step 5 test gameStart
+    // console.log('Deck:', deck); // step 5 test gameStart
     updateUI();
     displayMessage('Welcome to Blackjack! Place your bet to begin.')
 }
+window.startGame = startGame; // step 5 test gameStart
 
-//message display in textPromptArea
+// message display in textPromptArea
 function displayMessage(message, type ='info') {
     textPromptArea.textContent = message;
     if (type === 'error') {
@@ -90,6 +99,8 @@ function handleBet() {
     updateUI();
 }
 
+window.handleBet = handleBet; // step 5 test betting mechanics
+
 // update UI
 function updateUI() {
     playerMoneyDisplay.textContent = `Money: $${currentPlayer.money}`;
@@ -106,7 +117,8 @@ function dealCard(hand) {
 // handle Hit actions
 function handleHit() {
     const newCard = dealCard(currentPlayer.hand);
-    updateHandUI(currentPlayer.hand, 'playerCards'); //! add this function later
+    console.log('Player drew a card:', newCard); //step 5 debug
+    updateHandUI(currentPlayer.hand, 'playerCards');
     const playerScore = calculateScore(currentPlayer.hand);
     if (playerScore > 21) {
         displayMessage('Player busts! Dealer wins this round.', 'error');
@@ -116,17 +128,22 @@ function handleHit() {
         displayMessage(`You drew a card. Your current score is ${playerScore}.`, 'info');
     }
 }
+window.handleHit = handleHit; 
 
 // handle Stand actions
 function handleStand() {
     currentPlayer.isStanding = true;
+    displayMessage(`You chose to stand. Dealer's turn.`, 'info');
+    updateHandUI(dealer.hand, 'dealerCards', false);
     while (calculateScore(dealer.hand) < 17){
         const newCard = dealCard(dealer.hand);
-        updateHandUI(dealer.hand, 'dealerCards');
+        console.log('Dealer drew a card:', newCard); //step 5 debug
+        updateHandUI(dealer.hand, 'dealerCards', false);
     }
-    displayMessage(`You chose to stand. Dealer's turn.`, 'info');
+    updateHandUI(dealer.hand, 'dealerCards', true);
     checkWinner();
 }
+window.handleStand = handleStand;
 
 // Calculate hand scores
 function calculateScore(hand) {
@@ -147,47 +164,72 @@ function calculateScore(hand) {
 function checkWinner() {
     const playerScore = calculateScore(currentPlayer.hand);
     const dealerScore = calculateScore(dealer.hand);
-    // player blackjack
+    // player BJ
     if (playerScore === 21 && currentPlayer.hand.length === 2) {
         currentPlayer.money += currentPlayer.bet * 2.5; // 3:2 payout
         displayMessage('Blackjack! Player wins with a 3:2 payout', 'success');
         endRound();
         return;
-    } // dealer blackjack
+    }
+    // dealer BJ
     if (dealerScore === 21 && dealer.hand.length === 2) {
         displayMessage('Dealer has Blackjack! Dealer wins this round.', 'error');
         endRound();
         return;
-    } // normal win/loss logic
+    }
+    // player bust
     if (playerScore > 21) {
-        displayMessage('Player busts! Dealer wins.', 'error');
-    } else if (dealerScore > 21 || playerScore > dealerScore) {
-        currentPlayer.money += currentPlayer.bet * 2; // player win, their bet double
-        displayMessage('Player wins this round!', 'success');
-    } else if (playerScore === dealerScore) {
-        currentPlayer.money += currentPlayer.bet; // tie, bet return
+        displayMessage('Player busts! Dealer wins this round.', 'error');
+        endRound();
+        return;
+    }
+    // dealer bust
+    if (dealerScore > 21) {
+        currentPlayer.money += currentPlayer.bet * 2; // Double payout for player win
+        displayMessage('Dealer busts! Player wins this round!', 'success');
+        endRound();
+        return;
+    }
+    // tie
+    if (playerScore === dealerScore) {
+        currentPlayer.money += currentPlayer.bet; // Bet returned to player
         displayMessage(`It's a tie! Bet returned.`, 'info');
+        endRound();
+        return;
+    }
+    // normal win/loss
+    if (playerScore > dealerScore) {
+        currentPlayer.money += currentPlayer.bet * 2; // Double payout for player win
+        displayMessage('Player wins this round!', 'success');
     } else {
         displayMessage('Dealer wins this round!', 'error');
     }
-    endRound();
+
+    endRound(); 
 }
 
 // end round && reset for the next round
 function endRound() {
-    updateLeaderboard(currentPlayer);
-    currentPlayer.bet = 0; // reset bet && hands
+    // reset first
+    currentPlayer.bet = 0;
     currentPlayer.hand = [];
     dealer.hand = [];
-    renderLeaderboard();
+    updateLeaderboard(currentPlayer);
+    console.log('Leaderboard before rendering:', leaderboard); // Debugging
+    renderLeaderboard(leaderboard);
     updateUI();
-    displayMessage('Round ended. Place your bet to start the next round!', 'info') ;
+    // don't override winner message
+    if (!textPromptArea.textContent.includes('wins') && !textPromptArea.textContent.includes('tie')) {
+        displayMessage('Round ended. Place your bet to start the next round!', 'info');
+    }
 }
+window.endRound = endRound // step 5 test bet mechanics
 
 /*----------- Event Listeners ----------*/
 
 document.addEventListener('DOMContentLoaded', () => {
-    initializeGame(1); // start with 1 player for demo first
+    loadLeaderboard(); // load from localStorage 
+    startGame(1); // start with 1 player for demo first
 });
 
 betAmountInput.addEventListener('change', handleBet);
