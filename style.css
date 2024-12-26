@@ -80,6 +80,12 @@ nav a:not(:last-child) {
     color: black;
 }
 
+.card {
+    width: 80px;
+    height: auto;
+    margin: 5px;
+}
+
 #dealerScore, #playerScore, #playerMoney {
     font-size: 16px;
     margin: 5px 0;
@@ -177,7 +183,7 @@ nav a:not(:last-child) {
     transform: translateY(4px);
 }
 
-#about:hover, #rules:hover, #leaderboard:hover {
+#about:hover, #rules:hover, #leaderboardLink:hover {
     color: #7fffbf;
 }
 
