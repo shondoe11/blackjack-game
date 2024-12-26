@@ -1,3 +1,7 @@
+/*--------------- Imports --------------*/
+
+
+
 /*-------------- Constants -------------*/
 
 const suits = ['Clubs', 'Diamonds', 'Hearts', 'Spades']
@@ -26,7 +30,8 @@ export function createDeck() {
     });
     return deck;
 }
-// console.log(createDeck()) [step 1 test]
+// [step 1 test]
+// console.log(createDeck()) 
 
 export function getValue(rank) {
     if (rank === 'Ace') return 11; // initial set to 11, can be 1 later on
@@ -35,12 +40,15 @@ export function getValue(rank) {
 }
 
 export function shuffleDeck(deck) { // Fisher-Yates algo
-    for (let i = deck.length -1; i > 0; i--) {
+    for (let i = deck.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [deck[i], deck[j], deck[i]]; // swap elements
+        [deck[i], deck[j]] = [deck[j], deck[i]]; // swap elements
     } return deck;
 }
-
+// [step 1 test]
+// const deck = createDeck();
+// console.log('original deck: ', deck);
+// console.log('shuffle deck: ', shuffleDeck(deck));
 
 /*----------- Event Listeners ----------*/
 
