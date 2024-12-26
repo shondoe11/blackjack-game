@@ -1,8 +1,14 @@
-/*-------------- Constants -------------*/
+/*--------------- Imports --------------*/
 
 import Player from './player.js';
 
-import {createDeck, shuffleDeck} from './deck.js'; // ES6 modules
+import { createDeck, shuffleDeck } from './deck.js'; // ES6 modules
+
+import  { updateLeaderboard } from './leaderboard.js';
+
+import { renderLeaderboard } from './uiController.js';
+
+/*-------------- Constants -------------*/
 
 const initialMoney = 5000;
 
@@ -169,11 +175,13 @@ function checkWinner() {
 
 // end round && reset for the next round
 function endRound() {
-currentPlayer.bet = 0; // reset bet
-currentPlayer.hand = [];
-dealer.hand = [];
-updateUI();
-displayMessage('Round ended. Place your bet to start the next round!', 'info') ;
+    updateLeaderboard(currentPlayer);
+    currentPlayer.bet = 0; // reset bet && hands
+    currentPlayer.hand = [];
+    dealer.hand = [];
+    renderLeaderboard();
+    updateUI();
+    displayMessage('Round ended. Place your bet to start the next round!', 'info') ;
 }
 
 /*----------- Event Listeners ----------*/
@@ -187,3 +195,5 @@ betAmountInput.addEventListener('change', handleBet);
 hitButton.addEventListener('click', handleHit);
 
 standButton.addEventListener('click', handleStand);
+
+/*--------------- Exports --------------*/
