@@ -40,6 +40,8 @@ const hitButton = document.getElementById('hitButton');
 
 const standButton = document.getElementById('standButton');
 
+const resetButton = document.getElementById('resetButton');
+
 const textPromptArea = document.getElementById('textPromptArea');
 
 /*-------------- Functions -------------*/
@@ -151,6 +153,25 @@ function handleStand() {
 }
 window.handleStand = handleStand;
 
+function handleReset() {
+    console.log('Resetting the game...'); // debugging
+    // Reset player
+    currentPlayer.money = initialMoney;
+    currentPlayer.bet = 0;
+    currentPlayer.hand = [];
+    currentPlayer.isStanding = false;
+    currentPlayer.isBusted = false;
+    // reset dealer
+    dealer.hand = [];
+    // reset deck
+    deck = shuffleDeck(createDeck());
+    // clear UI
+    updateUI();
+    updateHandUI([], 'playerCards');
+    updateHandUI([], 'dealerCards');
+    displayMessage('Game reset. Start a new round by placing your bet.', 'info');
+}
+
 // Calculate hand scores
 function calculateScore(hand) {
     let total = 0;
@@ -243,5 +264,7 @@ betAmountInput.addEventListener('change', handleBet);
 hitButton.addEventListener('click', handleHit);
 
 standButton.addEventListener('click', handleStand);
+
+resetButton.addEventListener('click', handleReset);
 
 /*--------------- Exports --------------*/
