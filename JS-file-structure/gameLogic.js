@@ -97,6 +97,12 @@ function handleBet() {
     currentPlayer.bet = betAmount;
     displayMessage(`Bet of $${betAmount} placed. Good luck!`, 'success');
     updateUI();
+    // auto deal first card upon clicking 'bet'
+    const firstCard = dealCard(currentPlayer.hand);
+    console.log('Player drew the first card:', firstCard);
+    updateHandUI(currentPlayer.hand, 'playerCards');
+    const playerScore = calculateScore(currentPlayer.hand);
+    displayMessage(`You drew your first card. Current score: ${playerScore}.`, 'info');Card
 }
 
 window.handleBet = handleBet; // step 5 test betting mechanics
