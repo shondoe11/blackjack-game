@@ -120,23 +120,31 @@ function handleBet() {
         return;
     }
     if (betAmount > currentPlayer.money) {
-        console.log('Bet exceeds current money:', currentPlayer.money); // debugging
+        console.log('bet exceeds current money:', currentPlayer.money); // debugging
         displayMessage('Insufficient monies to place this bet.', 'error');
         betButton.disabled = false;
         return;
     }
     currentPlayer.money -= betAmount;
     currentPlayer.bet = betAmount;
-    console.log('Current Player Money:', currentPlayer.money); // debugging
-    console.log('Current Player Bet:', currentPlayer.bet); // debugging
+    console.log('current player money:', currentPlayer.money); // debugging
+    console.log('current player bet:', currentPlayer.bet); // debugging
     displayMessage(`Bet of $${betAmount} placed. Good luck!`, 'success');
     updateUI();
     // auto deal first card upon clicking 'bet'
     const firstCard = dealCard(currentPlayer.hand);
-    console.log('Player drew the first card:', firstCard); // debugging
+    console.log('player drew the first card:', firstCard); // debugging
+    const secondCard = dealCard(currentPlayer.hand);
+    console.log('player drew cards:', firstCard, secondCard); // debugging
     updateHandUI(currentPlayer.hand, 'playerCards');
     const playerScore = calculateScore(currentPlayer.hand);
-    console.log('Player Score After First Card:', playerScore); // debugging
+    console.log('player score after first card:', playerScore); // debugging
+    if (playerScore === 21 && currentPlayer.hand.length === 2) {
+        currentPlayer.money += currentPlayer.bet * 2.5; // 3:2 auto payout
+        displayMessage('Blackjack! Player wins with a 3:2 payout.', 'success');
+        endRound();
+        return;
+    }
     displayMessage(`You drew your first card. Current score: ${playerScore}.`, 'info');
 }
 
@@ -162,7 +170,7 @@ function dealCard(hand) {
 // handle Hit actions
 function handleHit() {
     const newCard = dealCard(currentPlayer.hand);
-    console.log('Player drew a card:', newCard); //step 5 debug
+    console.log('player drew a card:', newCard); //step 5 debug
     updateHandUI(currentPlayer.hand, 'playerCards');
     const playerScore = calculateScore(currentPlayer.hand);
     if (playerScore > 21) {
@@ -180,6 +188,17 @@ function handleStand() {
     currentPlayer.isStanding = true;
     displayMessage(`You chose to stand. Dealer's turn.`, 'info');
     updateHandUI(dealer.hand, 'dealerCards', false);
+    dealCard(dealer.hand);
+    dealCard(dealer.hand);
+    updateHandUI(dealer.hand, 'dealerCards', true);
+    const dealerScore = calculateScore(dealer.hand);
+    console.log('dealer score after initial cards:', dealerScore); // debugging
+    if (dealerScore === 21 && dealer.hand.length === 2) {
+        displayMessage('Dealer has Blackjack! Dealer wins this round.', 'error');
+        endRound();
+        return;
+    }
+
     while (calculateScore(dealer.hand) < 17){
         const newCard = dealCard(dealer.hand);
         console.log('Dealer drew a card:', newCard); //step 5 debug
@@ -323,6 +342,7 @@ function endRound() {
     currentPlayer.bet = 0;
     currentPlayer.hand = [];
     dealer.hand = [];
+    deck = shuffleDeck(createDeck());
     updateLeaderboard(currentPlayer);
     console.log('Leaderboard before rendering:', leaderboard); // Debugging
     renderLeaderboard(leaderboard);
