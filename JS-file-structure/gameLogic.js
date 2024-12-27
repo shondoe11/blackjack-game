@@ -53,6 +53,8 @@ function startGame(numPlayers) {
     // console.log('startGame called'); // step 5 test gameStart
     players = [];
     deck = shuffleDeck(createDeck());
+    window.deck = deck; // debugging
+    console.log('confirm deck initialized: ', deck); // debugging
     for (let i = 0; i < numPlayers; i++) {
         players.push({
             name: `Player ${i + 1}`,
@@ -65,6 +67,8 @@ function startGame(numPlayers) {
     }
     currentPlayer = players[0]; // assume 1 player first
     dealer.hand = [];
+    console.log('Players:', players); // debugging
+    console.log('Dealer:', dealer); // debugging
     window.currentPlayer = players[0]; 
     // console.log('Players:', players); // step 5 test gameStart
     // console.log('Dealer:', dealer); // step 5 test gameStart
@@ -74,8 +78,15 @@ function startGame(numPlayers) {
 }
 window.startGame = startGame; // step 5 test gameStart
 
+let currentMessage = ''; // track current msg
 // message display in textPromptArea
 function displayMessage(message, type ='info') {
+    if (currentMessage === message) {
+        // wont override same msg
+        return;
+    }
+    currentMessage = message; // update current msg
+    console.log('displayMessage called with: ', message, type); // debugging
     textPromptArea.textContent = message;
     if (type === 'error') {
         textPromptArea.style.color = 'red';
@@ -88,25 +99,45 @@ function displayMessage(message, type ='info') {
 
 // placing bet
 function handleBet() {
-    const betAmount = Number(betAmountInput.value);
+    console.log('handleBet called'); // debugging
+    const betButton = document.getElementById('betButton');
+    // console.log('Bet Button Disabled:', betButton.disabled); // debugging
+    // check bet button already disabled
+    if (betButton.disabled) {
+            console.log('Bet Button disabled. Showing message.'); // debugging
+            displayMessage('You have already placed your bet. Please continue with the other options!', 'info');
+             return;
+        }
+    console.log('Bet Button Disabled:', betButton.disabled); // debugging
+    betButton.disabled = true;
+    currentMessage = '';
+    const betAmount = Number(betAmountInput.value || MIN_BET);
+    console.log('Bet Amount Input Value:', betAmount); // debugging
     if (isNaN(betAmount) || betAmount < MIN_BET) {
+        console.log('Invalid bet amount:', betAmount); // debugging
         displayMessage('Bet must be a valid number and at least $50.', 'error');
+        betButton.disabled = false;
         return;
     }
     if (betAmount > currentPlayer.money) {
+        console.log('Bet exceeds current money:', currentPlayer.money); // debugging
         displayMessage('Insufficient monies to place this bet.', 'error');
+        betButton.disabled = false;
         return;
     }
     currentPlayer.money -= betAmount;
     currentPlayer.bet = betAmount;
+    console.log('Current Player Money:', currentPlayer.money); // debugging
+    console.log('Current Player Bet:', currentPlayer.bet); // debugging
     displayMessage(`Bet of $${betAmount} placed. Good luck!`, 'success');
     updateUI();
     // auto deal first card upon clicking 'bet'
     const firstCard = dealCard(currentPlayer.hand);
-    console.log('Player drew the first card:', firstCard);
+    console.log('Player drew the first card:', firstCard); // debugging
     updateHandUI(currentPlayer.hand, 'playerCards');
     const playerScore = calculateScore(currentPlayer.hand);
-    displayMessage(`You drew your first card. Current score: ${playerScore}.`, 'info');Card
+    console.log('Player Score After First Card:', playerScore); // debugging
+    displayMessage(`You drew your first card. Current score: ${playerScore}.`, 'info');
 }
 
 window.handleBet = handleBet; // step 5 test betting mechanics
@@ -119,6 +150,10 @@ function updateUI() {
 
 // deal card to player
 function dealCard(hand) {
+    if (deck.length === 0) {
+        console.error('The deck is empty! Cannot deal a card');
+        return null;
+    }
     const card = deck.pop();
     hand.push(card);
     return card;
@@ -191,6 +226,7 @@ function enableGameControls() {
 
 function handleReset() {
     console.log('resetting the game...'); // debugging
+    document.getElementById('betButton').disabled = false;
     // Reset player
     currentPlayer.money = initialMoney;
     currentPlayer.bet = 0;
@@ -207,6 +243,7 @@ function handleReset() {
     updateHandUI([], 'dealerCards');
     displayMessage('Game reset. Start a new round by placing your bet.', 'info');
     enableGameControls();
+    currentMessage = '';
 }
 
 // Calculate hand scores
@@ -275,6 +312,7 @@ function checkWinner() {
 // end round && reset for the next round
 function endRound() {
     // reset first
+    document.getElementById('betButton').disabled = false;
     currentPlayer.bet = 0;
     currentPlayer.hand = [];
     dealer.hand = [];
@@ -286,6 +324,7 @@ function endRound() {
     if (!textPromptArea.textContent.includes('wins') && !textPromptArea.textContent.includes('tie')) {
         displayMessage('Round ended. Place your bet to start the next round!', 'info');
     }
+    currentMessage = '';
 }
 window.endRound = endRound // step 5 test bet mechanics
 
@@ -297,6 +336,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 betAmountInput.addEventListener('change', handleBet);
+
+document.getElementById('betButton').addEventListener('click', handleBet);
 
 hitButton.addEventListener('click', handleHit);
 

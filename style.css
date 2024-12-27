@@ -183,6 +183,13 @@ nav a:not(:last-child) {
     transform: translateY(4px);
 }
 
+#betButton:disabled {
+    background-color: #D3D3D3;
+    color: red;
+    border: 1px solid #A9A9A9;
+    cursor: not-allowed;
+}
+
 #about:hover, #rules:hover, #leaderboardLink:hover {
     color: #7fffbf;
 }
