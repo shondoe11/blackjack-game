@@ -180,6 +180,15 @@ function disableGameControls() {
     document.getElementById('betButton').disabled = true;
 }
 
+// enable game controls after reset activates
+function enableGameControls() {
+    hitButton.disabled = false;
+    standButton.disabled = false;
+    betAmountInput.disabled = false;
+    document.getElementById('betButton').disabled = false;
+    cashOutButton.disabled = false;
+}
+
 function handleReset() {
     console.log('resetting the game...'); // debugging
     // Reset player
@@ -197,6 +206,7 @@ function handleReset() {
     updateHandUI([], 'playerCards');
     updateHandUI([], 'dealerCards');
     displayMessage('Game reset. Start a new round by placing your bet.', 'info');
+    enableGameControls();
 }
 
 // Calculate hand scores
