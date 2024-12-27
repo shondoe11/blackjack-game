@@ -265,6 +265,13 @@ function calculateScore(hand) {
 function checkWinner() {
     const playerScore = calculateScore(currentPlayer.hand);
     const dealerScore = calculateScore(dealer.hand);
+    // dealer && player BJ
+    if (playerScore === 21 && currentPlayer.hand.length === 2 && dealerScore === 21 && dealer.hand.length === 2) {
+        currentPlayer.money += currentPlayer.bet;
+        displayMessage(`Both player and dealer have Blackjack! It's a tie.`, 'info');
+        endRound();
+        return;
+    }
     // player BJ
     if (playerScore === 21 && currentPlayer.hand.length === 2) {
         currentPlayer.money += currentPlayer.bet * 2.5; // 3:2 payout
