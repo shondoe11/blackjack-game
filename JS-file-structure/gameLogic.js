@@ -40,6 +40,8 @@ const hitButton = document.getElementById('hitButton');
 
 const standButton = document.getElementById('standButton');
 
+const cashOutButton = document.getElementById('cashOutButton');
+
 const resetButton = document.getElementById('resetButton');
 
 const textPromptArea = document.getElementById('textPromptArea');
@@ -153,8 +155,33 @@ function handleStand() {
 }
 window.handleStand = handleStand;
 
+function handleCashOut() {
+    if (currentPlayer.money > 0) {
+        // update leaderboard
+        updateLeaderboard(currentPlayer);
+        console.log('cashing out player: ', currentPlayer); // debugging
+        renderLeaderboard(leaderboard);
+        // display success msg
+        displayMessage('You have cashed out! Your score is saved to the leaderboard.', 'success');
+        // disable further actions of currentPlayer
+        disableGameControls();
+        // save leaderboard data to localStorage
+        saveLeaderboard();
+    } else {
+        displayMessage('Cannot cash out with $0. Reset the game to play again', 'error');
+    }
+}
+
+// disable controls are cashing out
+function disableGameControls() {
+    hitButton.disabled = true;
+    standButton.disabled = true;
+    betAmountInput.disabled=true;
+    document.getElementById('betButton').disabled = true;
+}
+
 function handleReset() {
-    console.log('Resetting the game...'); // debugging
+    console.log('resetting the game...'); // debugging
     // Reset player
     currentPlayer.money = initialMoney;
     currentPlayer.bet = 0;
@@ -264,6 +291,8 @@ betAmountInput.addEventListener('change', handleBet);
 hitButton.addEventListener('click', handleHit);
 
 standButton.addEventListener('click', handleStand);
+
+cashOutButton.addEventListener('click', handleCashOut);
 
 resetButton.addEventListener('click', handleReset);
 
