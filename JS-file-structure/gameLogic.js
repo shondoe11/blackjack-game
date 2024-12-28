@@ -218,8 +218,15 @@ function handleCashOut() {
         renderLeaderboard(leaderboard);
         // display success msg
         displayMessage('You have cashed out! Your score is saved to the leaderboard.', 'success');
+        // disable cash out button to prevent subsequent clicks, which doesnt do anything anyway
+        cashOutButton.disabled = true;
+        cashOutButton.classList.add('disabled');
+        console.log('Cash-out button disabled.');
         // disable further actions of currentPlayer
         disableGameControls();
+        //re-enabled reset button as only option for currentPlayer
+        resetButton.disabled = false;
+        resetButton.classList.remove('disabled');
         // save leaderboard data to localStorage
         saveLeaderboard();
     } else {
@@ -250,8 +257,15 @@ window.endRound = endRound // step 5 test bet mechanics
 
 function handleReset() {
     console.log('resetting the game...'); // debugging
-    document.getElementById('betButton').disabled = false;
-    // Reset player
+    // enable bet button in order to start new game
+    const betButton = document.getElementById('betButton');
+    betButton.disabled = false;
+    betButton.classList.remove('disabled');
+    // enable cash out button
+    const cashOutButton = document.getElementById('cashOutButton');
+    cashOutButton.disabled = false;
+    cashOutButton.classList.remove('disabled');
+    // reset player
     currentPlayer.money = initialMoney;
     currentPlayer.bet = 0;
     currentPlayer.hand = [];
@@ -263,6 +277,7 @@ function handleReset() {
     deck = shuffleDeck(createDeck());
     // clear UI
     updateUI();
+    console.log('game reset success'); // debugging
     updateHandUI([], 'playerCards');
     updateHandUI([], 'dealerCards');
     displayMessage('Game reset. Start a new round by placing your bet.', 'info');
