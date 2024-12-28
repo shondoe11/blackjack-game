@@ -2,9 +2,9 @@
 
 import Player from './player.js';
 
-import { createDeck, shuffleDeck } from './deck.js'; // ES6 modules
+import { createDeck, shuffleDeck } from './deck.js';
 
-import  { leaderboard, loadLeaderboard, updateLeaderboard } from './leaderboard.js';
+import  { leaderboard, loadLeaderboard, updateLeaderboard, saveLeaderboard } from './leaderboard.js';
 
 import { updateHandUI, renderLeaderboard } from './uiController.js';
 
@@ -29,12 +29,18 @@ let dealer = {
 
 /*----- Cached Element References  -----*/
 
-const betAmountInput = document.getElementById('betAmount');
-window.betAmountInput = betAmountInput; // step 5 test betting mechanics
+const dealerScoreDisplay = document.getElementById('dealerScore');
+
+const textPromptArea = document.getElementById('textPromptArea');
 
 const playerMoneyDisplay = document.getElementById('playerMoney');
 
 const playerScoreDisplay = document.getElementById('playerScore');
+
+const betAmountInput = document.getElementById('betAmount');
+window.betAmountInput = betAmountInput; // step 5 test betting mechanics
+
+const betButton = document.getElementById('betButton');
 
 const hitButton = document.getElementById('hitButton');
 
@@ -43,8 +49,6 @@ const standButton = document.getElementById('standButton');
 const cashOutButton = document.getElementById('cashOutButton');
 
 const resetButton = document.getElementById('resetButton');
-
-const textPromptArea = document.getElementById('textPromptArea');
 
 /*-------------- Functions -------------*/
 
@@ -75,7 +79,7 @@ function startGame(numPlayers) {
     // console.log('Deck:', deck); // step 5 test gameStart
     displayMessage('Welcome to Blackjack! Place your bet to begin.')
     updateUI();
-    toggleGameControls(false);
+    resetGameControls();
 }
 window.startGame = startGame; // step 5 test gameStart
 
@@ -101,9 +105,6 @@ function displayMessage(message, type ='info') {
 // placing bet
 function handleBet() {
     console.log('handleBet called'); // debugging
-    const betButton = document.getElementById('betButton');
-    // console.log('Bet Button Disabled:', betButton.disabled); // debugging
-    // check bet button already disabled
     if (betButton.disabled) {
             console.log('Bet Button disabled. Showing message.'); // debugging
             displayMessage('You have already placed your bet. Please continue with the other options!', 'info');
@@ -151,7 +152,7 @@ function handleBet() {
         return;
     }
     displayMessage(`You drew your first 2 cards. Current score: ${playerScore}.`, 'info');
-    toggleGameControls(false);
+    betGameControls();
 }
 window.handleBet = handleBet; // step 5 test betting mechanics
 
@@ -240,7 +241,7 @@ function handleCashOut() {
 // end round && reset for the next round
 function endRound() {
     // reset first
-    document.getElementById('betButton').disabled = false;
+    betButton.disabled = false;
     currentPlayer.bet = 0;
     currentPlayer.hand = [];
     dealer.hand = [];
@@ -249,25 +250,19 @@ function endRound() {
     console.log('Leaderboard before rendering:', leaderboard); // Debugging
     renderLeaderboard(leaderboard);
     updateUI();
-    toggleGameControls(true);
     // UI prompt
     if (!textPromptArea.textContent.includes('wins') && !textPromptArea.textContent.includes('tie')) {
         displayMessage('Round ended. Place your bet to start the next round!', 'info');
     }
     currentMessage = '';
+    hitButton.disabled = true;
+    standButton.disabled = true;
+    betAmountInput.disabled = false;
 }
 window.endRound = endRound // step 5 test bet mechanics
 
 function handleReset() {
     console.log('resetting the game...'); // debugging
-    // enable bet button in order to start new game
-    const betButton = document.getElementById('betButton');
-    betButton.disabled = false;
-    betButton.classList.remove('disabled');
-    // enable cash out button
-    const cashOutButton = document.getElementById('cashOutButton');
-    cashOutButton.disabled = false;
-    cashOutButton.classList.remove('disabled');
     // reset player
     currentPlayer.money = initialMoney;
     currentPlayer.bet = 0;
@@ -284,38 +279,35 @@ function handleReset() {
     updateHandUI([], 'playerCards');
     updateHandUI([], 'dealerCards');
     displayMessage('Game reset. Start a new round by placing your bet.', 'info');
-    enableGameControls();
+    resetGameControls();
     currentMessage = '';
 }
 
-function toggleGameControls(disable = true) {
-    console.log('toggleGameControls called with:', disable); // debugging
-    hitButton.disabled = disable;
-    standButton.disabled = disable;
-    if (disable) {
-        hitButton.classList.add('disabled');
-        standButton.classList.add('disabled');
-    } else {
-        hitButton.classList.remove('disabled');
-        standButton.classList.remove('disabled');
-    }
+function betGameControls() {
+    hitButton.disabled = false;
+    standButton.disabled = false;
+    betAmountInput.disabled = true;
+    betButton.disabled = true;
+    cashOutButton.disabled = false;
+    resetButton.disabled = false;
 }
 
 // disable controls are cashing out
 function disableGameControls() {
     hitButton.disabled = true;
     standButton.disabled = true;
-    betAmountInput.disabled=true;
-    document.getElementById('betButton').disabled = true;
+    betAmountInput.disabled = true;
+    betButton.disabled = true;
 }
 
 // enable game controls after reset activates
-function enableGameControls() {
-    hitButton.disabled = false;
-    standButton.disabled = false;
+function resetGameControls() {
     betAmountInput.disabled = false;
-    document.getElementById('betButton').disabled = false;
-    cashOutButton.disabled = false;
+    betButton.disabled = false;
+    hitButton.disabled = true;
+    standButton.disabled = true;
+    cashOutButton.disabled = true;
+    resetButton.disabled = true;
 }
 
 // Calculate hand scores
