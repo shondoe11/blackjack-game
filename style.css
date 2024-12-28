@@ -183,7 +183,7 @@ nav a:not(:last-child) {
     transform: translateY(4px);
 }
 
-#betButton:disabled, #hitButton:disabled, #standButton:disabled {
+#betButton:disabled, #hitButton:disabled, #standButton:disabled, #cashOutButton:disabled {
     background-color: #D3D3D3;
     color: red;
     border: 1px solid #A9A9A9;
@@ -204,7 +204,8 @@ nav a:not(:last-child) {
 }
 
 #cashOutButton span, #resetButton span {
-    cursor: pointer;
+    /* remove for now,conflicting with #cashOutButton:disabled effect */
+    /* cursor: pointer;  */
     display: inline-block;
     position: relative;
     transition: 0.5s;
