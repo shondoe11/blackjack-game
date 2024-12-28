@@ -183,7 +183,7 @@ nav a:not(:last-child) {
     transform: translateY(4px);
 }
 
-#betButton:disabled {
+#betButton:disabled, #hitButton:disabled, #standButton:disabled {
     background-color: #D3D3D3;
     color: red;
     border: 1px solid #A9A9A9;
