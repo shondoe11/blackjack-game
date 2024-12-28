@@ -62,7 +62,7 @@ function startGame(numPlayers) {
             hand: [],
             bet: 0,
             isStanding: false,
-            isBusted: false
+            isBusted: false,
         });
     }
     currentPlayer = players[0]; // assume 1 player first
@@ -75,6 +75,7 @@ function startGame(numPlayers) {
     // console.log('Deck:', deck); // step 5 test gameStart
     updateUI();
     displayMessage('Welcome to Blackjack! Place your bet to begin.')
+    toggleGameControls(false);
 }
 window.startGame = startGame; // step 5 test gameStart
 
@@ -146,6 +147,7 @@ function handleBet() {
         return;
     }
     displayMessage(`You drew your first card. Current score: ${playerScore}.`, 'info');
+    toggleGameControls(false);
 }
 
 window.handleBet = handleBet; // step 5 test betting mechanics
@@ -198,7 +200,6 @@ function handleStand() {
         endRound();
         return;
     }
-
     while (calculateScore(dealer.hand) < 17){
         const newCard = dealCard(dealer.hand);
         console.log('Dealer drew a card:', newCard); //step 5 debug
@@ -226,22 +227,26 @@ function handleCashOut() {
     }
 }
 
-// disable controls are cashing out
-function disableGameControls() {
-    hitButton.disabled = true;
-    standButton.disabled = true;
-    betAmountInput.disabled=true;
-    document.getElementById('betButton').disabled = true;
-}
-
-// enable game controls after reset activates
-function enableGameControls() {
-    hitButton.disabled = false;
-    standButton.disabled = false;
-    betAmountInput.disabled = false;
+// end round && reset for the next round
+function endRound() {
+    // reset first
     document.getElementById('betButton').disabled = false;
-    cashOutButton.disabled = false;
+    currentPlayer.bet = 0;
+    currentPlayer.hand = [];
+    dealer.hand = [];
+    deck = shuffleDeck(createDeck());
+    updateLeaderboard(currentPlayer);
+    console.log('Leaderboard before rendering:', leaderboard); // Debugging
+    renderLeaderboard(leaderboard);
+    updateUI();
+    toggleGameControls(true);
+    // UI prompt
+    if (!textPromptArea.textContent.includes('wins') && !textPromptArea.textContent.includes('tie')) {
+        displayMessage('Round ended. Place your bet to start the next round!', 'info');
+    }
+    currentMessage = '';
 }
+window.endRound = endRound // step 5 test bet mechanics
 
 function handleReset() {
     console.log('resetting the game...'); // debugging
@@ -263,6 +268,36 @@ function handleReset() {
     displayMessage('Game reset. Start a new round by placing your bet.', 'info');
     enableGameControls();
     currentMessage = '';
+}
+
+function toggleGameControls(disable = true) {
+    console.log('toggleGameControls called with:', disable); // debugging
+    hitButton.disabled = disable;
+    standButton.disabled = disable;
+    if (disable) {
+        hitButton.classList.add('disabled');
+        standButton.classList.add('disabled');
+    } else {
+        hitButton.classList.remove('disabled');
+        standButton.classList.remove('disabled');
+    }
+}
+
+// disable controls are cashing out
+function disableGameControls() {
+    hitButton.disabled = true;
+    standButton.disabled = true;
+    betAmountInput.disabled=true;
+    document.getElementById('betButton').disabled = true;
+}
+
+// enable game controls after reset activates
+function enableGameControls() {
+    hitButton.disabled = false;
+    standButton.disabled = false;
+    betAmountInput.disabled = false;
+    document.getElementById('betButton').disabled = false;
+    cashOutButton.disabled = false;
 }
 
 // Calculate hand scores
@@ -334,26 +369,6 @@ function checkWinner() {
 
     endRound(); 
 }
-
-// end round && reset for the next round
-function endRound() {
-    // reset first
-    document.getElementById('betButton').disabled = false;
-    currentPlayer.bet = 0;
-    currentPlayer.hand = [];
-    dealer.hand = [];
-    deck = shuffleDeck(createDeck());
-    updateLeaderboard(currentPlayer);
-    console.log('Leaderboard before rendering:', leaderboard); // Debugging
-    renderLeaderboard(leaderboard);
-    updateUI();
-    // don't override winner message
-    if (!textPromptArea.textContent.includes('wins') && !textPromptArea.textContent.includes('tie')) {
-        displayMessage('Round ended. Place your bet to start the next round!', 'info');
-    }
-    currentMessage = '';
-}
-window.endRound = endRound // step 5 test bet mechanics
 
 /*----------- Event Listeners ----------*/
 
