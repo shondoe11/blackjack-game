@@ -68,4 +68,4 @@ loadLeaderboard();
 /*--------------- Exports --------------*/
 
 // export leaderboard functions
-export { leaderboard, updateLeaderboard, loadLeaderboard };
+export { leaderboard, updateLeaderboard, loadLeaderboard, saveLeaderboard };

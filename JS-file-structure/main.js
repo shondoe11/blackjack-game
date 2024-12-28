@@ -1,8 +1,6 @@
 /*-------------- Constants -------------*/
 
-import { loadLeaderboard } from "./leaderboard";
-
-import { startGame } from "./gameLogic.js"; 
+import { loadLeaderboard } from "./leaderboard.js";
 
 /*---------- Variables (state) ---------*/
 
