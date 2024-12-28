@@ -73,8 +73,8 @@ function startGame(numPlayers) {
     // console.log('Players:', players); // step 5 test gameStart
     // console.log('Dealer:', dealer); // step 5 test gameStart
     // console.log('Deck:', deck); // step 5 test gameStart
-    updateUI();
     displayMessage('Welcome to Blackjack! Place your bet to begin.')
+    updateUI();
     toggleGameControls(false);
 }
 window.startGame = startGame; // step 5 test gameStart
@@ -131,13 +131,17 @@ function handleBet() {
     console.log('current player money:', currentPlayer.money); // debugging
     console.log('current player bet:', currentPlayer.bet); // debugging
     displayMessage(`Bet of $${betAmount} placed. Good luck!`, 'success');
+    const firstCard = dealCard(currentPlayer.hand);
+    const secondCard = dealCard(currentPlayer.hand);
+    console.log(`player drew initial cards: `, firstCard, secondCard);
+    updateHandUI(currentPlayer.hand, 'playerCards');
+    const dealerFirstCard = dealCard(dealer.hand);
+    const dealerSecondCard = dealCard(dealer.hand);
+    console.log('dealer drew (face-up): ', dealerFirstCard);
+    console.log('dealer drew (face-down): ', dealerSecondCard);
+    updateHandUI(dealer.hand, 'dealerCards', false);
     updateUI();
     // auto deal first card upon clicking 'bet'
-    const firstCard = dealCard(currentPlayer.hand);
-    console.log('player drew the first card:', firstCard); // debugging
-    const secondCard = dealCard(currentPlayer.hand);
-    console.log('player drew cards:', firstCard, secondCard); // debugging
-    updateHandUI(currentPlayer.hand, 'playerCards');
     const playerScore = calculateScore(currentPlayer.hand);
     console.log('player score after first card:', playerScore); // debugging
     if (playerScore === 21 && currentPlayer.hand.length === 2) {
@@ -146,10 +150,9 @@ function handleBet() {
         endRound();
         return;
     }
-    displayMessage(`You drew your first card. Current score: ${playerScore}.`, 'info');
+    displayMessage(`You drew your first 2 cards. Current score: ${playerScore}.`, 'info');
     toggleGameControls(false);
 }
-
 window.handleBet = handleBet; // step 5 test betting mechanics
 
 // update UI
