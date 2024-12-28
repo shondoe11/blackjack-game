@@ -81,9 +81,11 @@ nav a:not(:last-child) {
 }
 
 .card {
-    width: 80px;
+    width: 100px;
     height: auto;
-    margin: 5px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
 }
 
 #dealerScore, #playerScore, #playerMoney {
