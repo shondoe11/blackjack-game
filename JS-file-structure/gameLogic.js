@@ -29,8 +29,6 @@ let dealer = {
 
 /*----- Cached Element References  -----*/
 
-const dealerScoreDisplay = document.getElementById('dealerScore');
-
 const textPromptArea = document.getElementById('textPromptArea');
 
 const playerMoneyDisplay = document.getElementById('playerMoney');
@@ -400,3 +398,5 @@ cashOutButton.addEventListener('click', handleCashOut);
 resetButton.addEventListener('click', handleReset);
 
 /*--------------- Exports --------------*/
+
+export {calculateScore};
