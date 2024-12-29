@@ -192,22 +192,33 @@ function handleStand() {
     currentPlayer.isStanding = true;
     displayMessage(`You chose to stand. Dealer's turn.`, 'info');
     updateHandUI(dealer.hand, 'dealerCards', false);
-    dealCard(dealer.hand);
-    dealCard(dealer.hand);
+    // dealCard(dealer.hand);
+    // dealCard(dealer.hand);
     updateHandUI(dealer.hand, 'dealerCards', true);
-    const dealerScore = calculateScore(dealer.hand);
+    let dealerScore = calculateScore(dealer.hand);
     console.log('dealer score after initial cards:', dealerScore); // debugging
     if (dealerScore === 21 && dealer.hand.length === 2) {
         displayMessage('Dealer has Blackjack! Dealer wins this round.', 'error');
         endRound();
         return;
     }
-    while (calculateScore(dealer.hand) < 17){
+    console.log('Dealer total before drawing:', calculateScore(dealer.hand)); // debugging
+    if (dealerScore >= 17) {
+        console.log('dealer dont need to draw more cards.');
+        updateHandUI(dealer.hand, 'dealerCards', true);
+        checkWinner();
+        return;
+    }
+    while (dealerScore < 17){
         const newCard = dealCard(dealer.hand);
-        console.log('Dealer drew a card:', newCard); //step 5 debug
+        console.log('Dealer drew a card:', newCard); // debugging
         updateHandUI(dealer.hand, 'dealerCards', false);
+        // recalculation after subsequent draws
+        dealerScore = calculateScore(dealer.hand);
+        console.log('dealer score after drawing card: ', dealerScore); // debugging
     }
     updateHandUI(dealer.hand, 'dealerCards', true);
+    console.log('final dealer score: ', dealerScore); // debugging
     checkWinner();
 }
 window.handleStand = handleStand;
