@@ -102,6 +102,20 @@ nav a:not(:last-child) {
     border-radius: 5px;
     font-size: 20px;
 }
+.nameInput {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.nameInput input {
+    height: 25px;
+    font-size: 16px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #CCC;
+}
 
 .controlsContainer {
     display: flex;
@@ -156,6 +170,17 @@ nav a:not(:last-child) {
     transition: background-color 0.3s ease;
 }
 
+#startGameButton {
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    background-color: #f200ff;
+    color: white;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
 #hitButton {
     background-color: #D32F2F;
 }
@@ -173,19 +198,19 @@ nav a:not(:last-child) {
 }
 
 .bettingControls button:hover,
-.gameControls button:not(#resetButton):hover {
+.gameControls button:not(#resetButton):hover, #startGameButton:hover {
     border: 1.5px solid rgb(115, 255, 255);
     color: rgb(115, 255, 255);
 }
 
 .bettingControls button:active,
-.gameControls button:active {
+.gameControls button:active, #startGameButton:active {
     background-color: #3e8e41;
     box-shadow: 0 5px #666;
     transform: translateY(4px);
 }
 
-#betButton:disabled, #hitButton:disabled, #standButton:disabled, #cashOutButton:disabled {
+#betButton:disabled, #hitButton:disabled, #standButton:disabled, #cashOutButton:disabled, #resetButton:disabled {
     background-color: #D3D3D3;
     color: red;
     border: 1px solid #A9A9A9;
@@ -201,11 +226,12 @@ nav a:not(:last-child) {
     color: rgb(255, 0, 0);
 }
 
-#cashOutButton:hover span, #resetButton:hover span {
+#cashOutButton:hover span, #resetButton:hover span, #startGameButton:hover span {
     padding-right: 25px;
 }
 
-#cashOutButton span, #resetButton span {
+#cashOutButton span, #resetButton span,
+#startGameButton span {
     /* remove for now,conflicting with #cashOutButton:disabled effect */
     /* cursor: pointer;  */
     display: inline-block;
@@ -214,7 +240,7 @@ nav a:not(:last-child) {
     font-size: 20px;
 }
 
-#cashOutButton span:after, #resetButton span:after {
+#cashOutButton span:after, #resetButton span:after, #startGameButton span:after {
     content: '\00bb';
     position: absolute;
     opacity: 0;
@@ -223,7 +249,7 @@ nav a:not(:last-child) {
     transition: 0.5s;
 }
 
-#cashOutButton:hover span:after, #resetButton:hover span:after {
+#cashOutButton:hover span:after, #resetButton:hover span:after, #startGameButton:hover span:after {
     opacity: 1;
     right:0;
 }
