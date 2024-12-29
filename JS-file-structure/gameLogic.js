@@ -192,20 +192,11 @@ function handleStand() {
     currentPlayer.isStanding = true;
     displayMessage(`You chose to stand. Dealer's turn.`, 'info');
     updateHandUI(dealer.hand, 'dealerCards', false);
-    // dealCard(dealer.hand);
-    // dealCard(dealer.hand);
     updateHandUI(dealer.hand, 'dealerCards', true);
     let dealerScore = calculateScore(dealer.hand);
     console.log('dealer score after initial cards:', dealerScore); // debugging
     if (dealerScore === 21 && dealer.hand.length === 2) {
         displayMessage('Dealer has Blackjack! Dealer wins this round.', 'error');
-        endRound();
-        return;
-    }
-    console.log('Dealer total before drawing:', calculateScore(dealer.hand)); // debugging
-    if (dealerScore >= 17) {
-        console.log('dealer dont need to draw more cards.');
-        updateHandUI(dealer.hand, 'dealerCards', true);
         checkWinner();
         return;
     }
@@ -216,6 +207,13 @@ function handleStand() {
         // recalculation after subsequent draws
         dealerScore = calculateScore(dealer.hand);
         console.log('dealer score after drawing card: ', dealerScore); // debugging
+    }
+    console.log('Dealer total before drawing:', calculateScore(dealer.hand)); // debugging
+    if (dealerScore > 17) {
+        console.log('dealer dont need to draw more cards.');
+        updateHandUI(dealer.hand, 'dealerCards', true);
+        checkWinner();
+        return;
     }
     updateHandUI(dealer.hand, 'dealerCards', true);
     console.log('final dealer score: ', dealerScore); // debugging
@@ -340,7 +338,7 @@ function checkWinner() {
     const dealerScore = calculateScore(dealer.hand);
     // dealer && player BJ
     if (playerScore === 21 && currentPlayer.hand.length === 2 && dealerScore === 21 && dealer.hand.length === 2) {
-        currentPlayer.money += currentPlayer.bet;
+        // currentPlayer.money += currentPlayer.bet;
         displayMessage(`Both player and dealer have Blackjack! It's a tie.`, 'info');
         endRound();
         return;
@@ -366,26 +364,25 @@ function checkWinner() {
     }
     // dealer bust
     if (dealerScore > 21) {
-        currentPlayer.money += currentPlayer.bet * 2; // Double payout for player win
+        currentPlayer.money += currentPlayer.bet * 2;
         displayMessage('Dealer busts! Player wins this round!', 'success');
         endRound();
         return;
     }
     // tie
     if (playerScore === dealerScore) {
-        currentPlayer.money += currentPlayer.bet; // Bet returned to player
+        currentPlayer.money += currentPlayer.bet; // bet return to player
         displayMessage(`It's a tie! Bet returned.`, 'info');
         endRound();
         return;
     }
     // normal win/loss
     if (playerScore > dealerScore) {
-        currentPlayer.money += currentPlayer.bet * 2; // Double payout for player win
+        currentPlayer.money += currentPlayer.bet * 2;
         displayMessage('Player wins this round!', 'success');
     } else {
         displayMessage('Dealer wins this round!', 'error');
     }
-
     endRound(); 
 }
 
