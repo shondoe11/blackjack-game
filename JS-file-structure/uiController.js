@@ -1,3 +1,7 @@
+/*--------------- Imports --------------*/
+
+import { calculateScore } from "./gameLogic.js";
+
 /*-------------- Constants -------------*/
 
 // NA for now
@@ -20,21 +24,34 @@ function updateHandUI(hand, handElementId, revealAll = true) {
         return;
     }
     handElement.innerHTML = ''; // clear previous cards
+    let totalScore = 0;
+    let hasFaceDownCard = false;
     hand.forEach((card, index) => {
         const cardImg = document.createElement('img');
         if (!revealAll && index === 0) {
-            // Show face-down card for the dealer's first card
+            // face-down card, dealer's first card
             cardImg.src = `./IMG-assets/cards/back_of_card.png`;
+            hasFaceDownCard = true;
         } else {
-            // Show the actual card
+            // show actual card
             cardImg.src = `./IMG-assets/cards/${card.rank.toLowerCase()}_of_${card.suit.toLowerCase()}.png`;
+            totalScore += card.value;
         }
         cardImg.alt = `${card.rank} of ${card.suit}`;
         cardImg.classList.add('card');
         handElement.appendChild(cardImg);
     });
+    if (handElementId === 'dealerCards') {
+        const dealerScoreElement = document.getElementById('dealerScore');
+        if (hasFaceDownCard) {
+            dealerScoreElement.textContent = 'Total: ??';
+        } else {
+            // account for aces
+            totalScore = calculateScore(hand);
+            dealerScoreElement.textContent = `Total: ${totalScore}`
+        }
+    }
 }
-
 
 // render dynamic leaderboard
 function renderLeaderboard(leaderboard = []) {
