@@ -49,7 +49,8 @@ nav a:not(:last-child) {
     margin: 20px auto;
     padding: 20px;
     background: #771d09;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2),
+        0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
 }
 
@@ -60,6 +61,7 @@ nav a:not(:last-child) {
     margin: 10px 0;
     background: #35654d;
     color: white;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .cards {
@@ -86,6 +88,7 @@ nav a:not(:last-child) {
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     object-fit: cover;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 #dealerScore, #playerScore, #playerMoney {
@@ -101,7 +104,9 @@ nav a:not(:last-child) {
     border: 3px solid #7378f9;
     border-radius: 5px;
     font-size: 20px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
 }
+
 .nameInput {
     display: flex;
     justify-content: center;
@@ -155,6 +160,7 @@ nav a:not(:last-child) {
     border-radius: 20px;
     cursor: pointer;
     width: 100px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease;
 }
 
@@ -167,6 +173,7 @@ nav a:not(:last-child) {
     color: white;
     width: 150px;
     border-radius: 25px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease;
 }
 
@@ -197,10 +204,17 @@ nav a:not(:last-child) {
     background-color: #616161;
 }
 
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+}
+
 .bettingControls button:hover,
 .gameControls button:not(#resetButton):hover, #startGameButton:hover {
     border: 1.5px solid rgb(115, 255, 255);
     color: rgb(115, 255, 255);
+    transform: translateY(-3px);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 .bettingControls button:active,
@@ -208,6 +222,7 @@ nav a:not(:last-child) {
     background-color: #3e8e41;
     box-shadow: 0 5px #666;
     transform: translateY(4px);
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .nameInput input:disabled, #startGameButton:disabled, .bettingControls input:disabled, #betButton:disabled, #hitButton:disabled, #standButton:disabled, #cashOutButton:disabled, #resetButton:disabled {
@@ -224,6 +239,8 @@ nav a:not(:last-child) {
 #resetButton:hover {
     border: 1.5px solid rgb(255, 0, 0);
     color: rgb(255, 0, 0);
+    transform: translateY(-3px);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 #cashOutButton:hover span, #resetButton:hover span, #startGameButton:hover span {
@@ -263,7 +280,7 @@ nav a:not(:last-child) {
     color: #FFD700;
     width: 80%;
     max-width: 1024px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3), 0px 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 /* style leaderboardList later */
