@@ -35,6 +35,8 @@ const playerMoneyDisplay = document.getElementById('playerMoney');
 
 const playerScoreDisplay = document.getElementById('playerScore');
 
+const nameInputContainer = document.querySelector('.nameInput');
+
 const playerNameInput = document.getElementById('playerName');
 
 const startGameButton = document.getElementById('startGameButton');
@@ -114,7 +116,11 @@ function handleNameInput() {
     currentPlayer.name = playerName;
     console.log(`player name is now: ${playerName}`); // debugging
     displayMessage(`Welcome, ${playerName}! Place your bet to begin.`, 'info');
-    playerNameInput.disabled = true;
+    // hiding the name input field and button
+    if (nameInputContainer) {
+        nameInputContainer.style.display = 'none';
+    }
+    playerNameInput.disabled = true; // keep as insurance first
     startGameButton.disabled = true;
     betAmountInput.disabled = false;
     betButton.disabled = false;
@@ -318,6 +324,10 @@ function handleReset() {
     updateHandUI([], 'dealerCards');
     displayMessage('Game reset. Start a new round by placing your bet.', 'info');
     resetGameControls();
+    // show name input container fields after reset clicked
+    if (nameInputContainer) {
+        nameInputContainer.style.display = 'flex'; //reappear as flexbox
+    }
     currentMessage = '';
     updateUI();
 }
