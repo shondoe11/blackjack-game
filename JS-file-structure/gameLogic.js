@@ -35,6 +35,10 @@ const playerMoneyDisplay = document.getElementById('playerMoney');
 
 const playerScoreDisplay = document.getElementById('playerScore');
 
+const playerNameInput = document.getElementById('playerName');
+
+const startGameButton = document.getElementById('startGameButton');
+
 const betAmountInput = document.getElementById('betAmount');
 window.betAmountInput = betAmountInput; // step 5 test betting mechanics
 
@@ -68,6 +72,7 @@ function startGame(numPlayers) {
         });
     }
     currentPlayer = players[0]; // assume 1 player first
+    if (!currentPlayer.name) currentPlayer.name = 'Nameless Gambler';
     dealer.hand = [];
     console.log('Players:', players); // debugging
     console.log('Dealer:', dealer); // debugging
@@ -75,9 +80,8 @@ function startGame(numPlayers) {
     // console.log('Players:', players); // step 5 test gameStart
     // console.log('Dealer:', dealer); // step 5 test gameStart
     // console.log('Deck:', deck); // step 5 test gameStart
-    displayMessage('Welcome to Blackjack! Place your bet to begin.')
     updateUI();
-    resetGameControls();
+    startGameControls();
 }
 window.startGame = startGame; // step 5 test gameStart
 
@@ -98,6 +102,27 @@ function displayMessage(message, type ='info') {
     } else {
         textPromptArea.style.color = 'black'; //default for info msgs
     }
+}
+
+function handleNameInput() {
+    const playerName = playerNameInput.value.trim();
+    if (!playerName) {
+        displayMessage('Please enter a valid name before starting the game.', 'error');
+        return;
+    }
+    startGame(1);
+    currentPlayer.name = playerName;
+    console.log(`player name is now: ${playerName}`); // debugging
+    displayMessage(`Welcome, ${playerName}! Place your bet to begin.`, 'info');
+    playerNameInput.disabled = true;
+    startGameButton.disabled = true;
+    betAmountInput.disabled = false;
+    betButton.disabled = false;
+    hitButton.disabled = true;
+    standButton.disabled = true;
+    cashOutButton.disabled = true;
+    resetButton.disabled = true;
+    updateUI();
 }
 
 // placing bet
@@ -146,6 +171,8 @@ function handleBet() {
     if (playerScore === 21 && currentPlayer.hand.length === 2) {
         currentPlayer.money += currentPlayer.bet * 2.5; // 3:2 auto payout
         displayMessage('Blackjack! Player wins with a 3:2 payout.', 'success');
+        cashOutButton.disabled = false;
+        resetButton.disabled = false;
         endRound();
         return;
     }
@@ -158,6 +185,10 @@ window.handleBet = handleBet; // step 5 test betting mechanics
 function updateUI() {
     playerMoneyDisplay.textContent = `Money: $${currentPlayer.money}`;
     playerScoreDisplay.textContent = `Bet: $${currentPlayer.bet}`;
+    const playerHandHeading = document.getElementById('playerHandHeading');
+    if (playerHandHeading) {
+        playerHandHeading.textContent = `${currentPlayer.name}'s Hand:`;
+    }
 }
 
 // deal card to player
@@ -288,6 +319,22 @@ function handleReset() {
     displayMessage('Game reset. Start a new round by placing your bet.', 'info');
     resetGameControls();
     currentMessage = '';
+    updateUI();
+}
+
+function startGameControls() {
+    console.log('startGameControls executed'); // debugging
+    playerNameInput.disabled = false;
+    startGameButton.disabled = false;
+    betAmountInput.disabled = true;
+    console.log('Bet amount input disabled:', betAmountInput.disabled); // debugging
+    betButton.disabled = true;
+    console.log("Bet button initial state in startGameControls:", betButton.disabled); // debugging
+    hitButton.disabled = true;
+    standButton.disabled = true;
+    cashOutButton.disabled = true;
+    resetButton.disabled = true;
+    displayMessage('Enter your name and click "Start Game" to begin.', 'info');
 }
 
 function betGameControls() {
@@ -309,12 +356,16 @@ function disableGameControls() {
 
 // enable game controls after reset activates
 function resetGameControls() {
-    betAmountInput.disabled = false;
-    betButton.disabled = false;
+    playerNameInput.disabled = false;
+    playerNameInput.value = '';
+    startGameButton.disabled = false;
+    betAmountInput.disabled = true;
+    betButton.disabled = true;
     hitButton.disabled = true;
     standButton.disabled = true;
     cashOutButton.disabled = true;
     resetButton.disabled = true;
+    displayMessage('Enter your name and click "Start Game" to begin.', 'info');
 }
 
 // Calculate hand scores
@@ -347,6 +398,8 @@ function checkWinner() {
     if (playerScore === 21 && currentPlayer.hand.length === 2) {
         currentPlayer.money += currentPlayer.bet * 2.5; // 3:2 payout
         displayMessage('Blackjack! Player wins with a 3:2 payout', 'success');
+        cashOutButton.disabled = false;
+        resetButton.disabled = false;
         endRound();
         return;
     }
@@ -389,9 +442,14 @@ function checkWinner() {
 /*----------- Event Listeners ----------*/
 
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOMContentLoaded started'); // debugging
     loadLeaderboard(); // load from localStorage 
-    startGame(1); // start with 1 player for demo first
+    // startGame(1); // start with 1 player for demo first
+    startGameControls();
+    displayMessage('Enter your name and click "Start Game" to begin.', 'info');
 });
+
+startGameButton.addEventListener('click', handleNameInput);
 
 betAmountInput.addEventListener('change', handleBet);
 
