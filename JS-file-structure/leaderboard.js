@@ -18,15 +18,20 @@ window.leaderboard = leaderboard; //step 5 testing
 
 // update leaderboard with player name && money
 function updateLeaderboard(player) {
-    console.log('Updating leaderboard with:', player); // step 5 test 
+    console.log('updating leaderboard with:', player); // step 5 test 
     // check if player name exists in leaderboard
     const existingPlayer = leaderboard.find(entry => entry.name === player.name);
     if (existingPlayer) {
-        console.log('Updating existing player:', existingPlayer); // step 5 test
+        console.log('updating existing player:', existingPlayer); // step 5 test
         // update player monies
-        existingPlayer.money = player.money;
+        if (player.money > existingPlayer.money) {
+            existingPlayer.money = player.money;
+            console.log(`player ${player.name} score updated to: ${player.money}`); // debugging
+        } else {
+            console.log(`player ${player.name} has a lower score. no update needed.`)
+        }
     } else {
-        console.log('Adding new player to leaderboard:', player); // step 5 test
+        console.log('adding new player to leaderboard:', player); // step 5 test
         // add new player to leaderboard
         leaderboard.push({name: player.name, money: player.money});
     }
@@ -37,25 +42,25 @@ function updateLeaderboard(player) {
         leaderboard = leaderboard.slice(0, 10);
     }
     saveLeaderboard(); // save wrapping
-    console.log('Updated leaderboard:', leaderboard); // step 5 debugging
+    console.log('updated leaderboard:', leaderboard); // step 5 debugging
 }
 // console.log('Loaded leaderboard:', leaderboard); //step 5 debugging
 
 // save leaderboard via localStorage
 function saveLeaderboard() {
-    localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-}
+    if (localStorage && Array.isArray(leaderboard)) {
+        localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+        console.log('leaderboard saved to localStorage'); // debugging
+    } else {
+        console.log('could not save leaderboard. ensure localStorage is avail && leaderboard is arrayed');
+    }
+ }
 
 // load from localStorage
 function loadLeaderboard() {
     const storedLeaderboard = localStorage.getItem('leaderboard');
-    if (storedLeaderboard) {
-        leaderboard = JSON.parse(storedLeaderboard);
-        window.leaderboard = leaderboard; //step 5 test
-    } else {
-        leaderboard = []; // Initialize empty array if nothing exists
-        window.leaderboard = leaderboard; // step 5 test
-    }
+    leaderboard = JSON.parse(storedLeaderboard || '[]'); // parse OR fallback
+    leaderboard = Array.isArray(leaderboard)?leaderboard: []; // make sure isArray
     console.log('Loaded leaderboard:', leaderboard); // step 5 test
 }
 // call function during game start
