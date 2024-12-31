@@ -283,6 +283,14 @@ nav a:not(:last-child) {
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3), 0px 4px 6px rgba(0, 0, 0, 0.2);
 }
 
+#leaderboardSection h2 {
+    font-size: 24px;
+    color: #FFD700;
+    text-align: center;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+    margin-bottom: 10px;
+}
+
 #leaderboardList {
     list-style: none;
     padding: 0;
@@ -310,4 +318,26 @@ nav a:not(:last-child) {
 #leaderboardList li:hover {
     transform: translateY(-3px);
     box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+#leaderboardList li:first-child {
+    background: #FFD700;
+    color: #333;
+    font-size: 20px;
+    font-weight: 900;
+    border: 2px solid #FFDF00;
+}
+
+#leaderboardList li:nth-child(2) {
+    background: #C0C0C0;
+    color: #333;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+#leaderboardList li:nth-child(3) {
+    background: #CD7F32;
+    color: #333;
+    font-size: 19px;
+    font-weight: 700;
 }
