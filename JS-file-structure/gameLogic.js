@@ -6,7 +6,7 @@ import { createDeck, shuffleDeck } from './deck.js';
 
 import  { leaderboard, loadLeaderboard, updateLeaderboard, saveLeaderboard } from './leaderboard.js';
 
-import { updateHandUI, renderLeaderboard } from './uiController.js';
+import { updateHandUI, updateUI, renderLeaderboard } from './uiController.js';
 
 /*-------------- Constants -------------*/
 
@@ -27,7 +27,13 @@ let dealer = {
     hand: [],
 };
 
+let numPlayers = 1; //default
+
+let currentPlayerIndex = 0; // current player turn tracking
+
 /*----- Cached Element References  -----*/
+
+const playerSetupSection = document.getElementById('playerSetupSection');
 
 const textPromptArea = document.getElementById('textPromptArea');
 
@@ -40,6 +46,10 @@ const nameInputContainer = document.querySelector('.nameInput');
 const playerNameInput = document.getElementById('playerName');
 
 const startGameButton = document.getElementById('startGameButton');
+
+const bettingControls = document.querySelector('.bettingControls')
+
+const gameControls = document.querySelector('.gameControls')
 
 const betAmountInput = document.getElementById('betAmount');
 window.betAmountInput = betAmountInput; // step 5 test betting mechanics
@@ -55,37 +65,6 @@ const cashOutButton = document.getElementById('cashOutButton');
 const resetButton = document.getElementById('resetButton');
 
 /*-------------- Functions -------------*/
-
-// start game with preset conditions
-function startGame(numPlayers) {
-    // console.log('startGame called'); // step 5 test gameStart
-    players = [];
-    deck = shuffleDeck(createDeck());
-    window.deck = deck; // debugging
-    console.log('confirm deck initialized: ', deck); // debugging
-    for (let i = 0; i < numPlayers; i++) {
-        players.push({
-            name: `Player ${i + 1}`,
-            money: initialMoney,
-            hand: [],
-            bet: 0,
-            isStanding: false,
-            isBusted: false,
-        });
-    }
-    currentPlayer = players[0]; // assume 1 player first
-    if (!currentPlayer.name) currentPlayer.name = 'Nameless Gambler';
-    dealer.hand = [];
-    console.log('Players:', players); // debugging
-    console.log('Dealer:', dealer); // debugging
-    window.currentPlayer = players[0]; 
-    // console.log('Players:', players); // step 5 test gameStart
-    // console.log('Dealer:', dealer); // step 5 test gameStart
-    // console.log('Deck:', deck); // step 5 test gameStart
-    updateUI();
-    startGameControls();
-}
-window.startGame = startGame; // step 5 test gameStart
 
 let currentMessage = ''; // track current msg
 // message display in textPromptArea
@@ -106,36 +85,74 @@ function displayMessage(message, type ='info') {
     }
 }
 
-function handleNameInput() {
-    const playerName = playerNameInput.value.trim();
-    if (!playerName) {
-        displayMessage('Please enter a valid name before starting the game.', 'error');
-        return;
+// start player setup
+function startSetup() {
+    const numPlayersInput = document.getElementById('numPlayers').value;
+    numPlayers = Math.max(1, Math.min(6, Number(numPlayersInput)));
+    nameInputContainer.innerHTML = '';
+    // inputs for player names
+    for (let i = 0; i <numPlayers; i++) {
+        const nameInput = document.createElement('div');
+        nameInput.innerHTML = `
+        <label for='playerName ${i + 1}'>Player ${i + 1} Name: </label>
+        <input type='text' id='playerName${i + 1}' placeholder='Player ${i + 1}'>
+        `;
+        nameInputContainer.appendChild(nameInput);
     }
-    startGame(1);
-    currentPlayer.name = playerName;
-    console.log(`player name is now: ${playerName}`); // debugging
-    displayMessage(`Welcome, ${playerName}! Place your bet to begin.`, 'info');
-    // hiding the name input field and button
-    if (nameInputContainer) {
-        nameInputContainer.style.display = 'none';
-    }
-    playerNameInput.disabled = true; // keep as insurance first
-    startGameButton.disabled = true;
-    betAmountInput.disabled = false;
-    betButton.disabled = false;
-    hitButton.disabled = true;
-    standButton.disabled = true;
-    cashOutButton.disabled = true;
-    resetButton.disabled = true;
-    updateUI();
+    // show start game button
+    startGameButton.style.display = '';
+    displayMessage('Next, enter your name(s) and click "Start Game" when ready!', 'info')
 }
+
+function handleNameInput() {
+    players = []; // reset players for multiplayer
+    for (let i = 0; i < numPlayers; i++) {
+        const playerName = document.getElementById(`playerName${i + 1}`).value.trim();
+        players.push({
+            name: playerName || `Player ${i + 1}`, //default name if NA
+            money: initialMoney,
+            hand: [],
+            bet: 0,
+            isStanding: false,
+            isBusted: false
+        });
+    }
+    console.log('players: ', players); //debugging
+    if (players.length > 0) {
+        console.log('starting the game..');
+        startGame();
+    } else {
+        console.error('no players created. game cant start');
+    }
+}
+
+// start game with preset conditions
+function startGame() {
+    console.log('startGame called'); // step 5 test gameStart
+    currentPlayerIndex = 0; // reset to first player turn
+    currentPlayer = players[currentPlayerIndex];
+    deck = shuffleDeck(createDeck());
+    window.deck = deck; // debugging
+    console.log('confirm deck initialized & shuffled: ', deck); // debugging
+    players.forEach(player => {
+        player.hand = [];
+        player.bet = 0;
+        player.isStanding = false;
+        player.isBusted = false;
+    });
+    dealer.hand = [];
+    updateUI();
+    startGameControls();
+    displayMessage(`${players[currentPlayerIndex].name}, it's your turn! Place bet.`);
+}
+window.startGame = startGame; // step 5 test gameStart
+
 
 // placing bet
 function handleBet() {
     console.log('handleBet called'); // debugging
     if (betButton.disabled) {
-            console.log('Bet Button disabled. Showing message.'); // debugging
+            console.log('bet button disabled'); // debugging
             displayMessage('You have already placed your bet. Please continue with the other options!', 'info');
              return;
         }
@@ -182,79 +199,74 @@ function handleBet() {
         endRound();
         return;
     }
-    displayMessage(`You drew your first 2 cards. Current score: ${playerScore}.`, 'info');
+    if (dealerScore === 21 && dealer.hand.length === 2) {
+            currentPlayer.money -= currentPlayer.bet
+            displayMessage(`Dealer has Blackjack! ${player.name} loses this round.`, 'error');
+            endRound();
+            return;
+        }
+    displayMessage(`Bet of $${betAmount} placed. Good luck! You drew your first 2 cards. Current score: ${playerScore}.`, 'info');
     betGameControls();
 }
 window.handleBet = handleBet; // step 5 test betting mechanics
 
-// update UI
-function updateUI() {
-    playerMoneyDisplay.textContent = `Money: $${currentPlayer.money}`;
-    playerScoreDisplay.textContent = `Bet: $${currentPlayer.bet}`;
-    const playerHandHeading = document.getElementById('playerHandHeading');
-    if (playerHandHeading) {
-        playerHandHeading.textContent = `${currentPlayer.name}'s Hand:`;
-    }
-}
-
 // deal card to player
 function dealCard(hand) {
-    if (deck.length === 0) {
+    if (!deck || deck.length === 0) {
         console.error('The deck is empty! Cannot deal a card');
         return null;
     }
     const card = deck.pop();
+    console.log('dealt card:', card); // debugging
+    console.log('deck after dealing:', deck); // debugging
     hand.push(card);
     return card;
 }
 
+function dealInitialCards() {
+    players.forEach(player => {
+        const card1 = dealCard(player.hand);
+        const card2 = dealCard(player.hand);
+        console.log(`player drew: ${card1.rank} of ${card1.suit}, ${card2.rank} of ${card2.suit}`); // debugging
+        player.hand.push(card1, card2);
+    });
+    const dealerCard1 = dealCard(dealer.hand);
+    const dealerCard2 = dealCard(dealer.hand);
+    console.log(`dealer drew: ${dealerCard1.rank} of ${dealerCard1.suit}, ${dealerCard2.rank} of ${dealerCard2.suit}`); // debugging
+    dealer.hand.push(dealerCard1, dealerCard2);
+    updateHandUI(dealer.hand, 'dealerCards', false); //dealer second card hide
+    updateHandUI(players[currentPlayerIndex].hand, 'playerCards');
+}
+
 // handle Hit actions
 function handleHit() {
-    const newCard = dealCard(currentPlayer.hand);
-    console.log('player drew a card:', newCard); //step 5 debug
+    const currentPlayer = players[currentPlayerIndex];
+    const newCard = dealCard(deck);
+    currentPlayer.hand.push(newCard);
     updateHandUI(currentPlayer.hand, 'playerCards');
     const playerScore = calculateScore(currentPlayer.hand);
     if (playerScore > 21) {
-        displayMessage('Player busts! Dealer wins this round.', 'error');
+        displayMessage(`${currentPlayer.name} busts!`, 'error');
         currentPlayer.isBusted = true;
-        endRound();
+        nextPlayerTurn();
     } else {
-        displayMessage(`You drew a card. Your current score is ${playerScore}.`, 'info');
+        displayMessage(`${currentPlayer.name}, your score is ${playerScore}.`, 'info');
     }
 }
 window.handleHit = handleHit; 
 
 // handle Stand actions
 function handleStand() {
+    const currentPlayer = players[currentPlayerIndex];
     currentPlayer.isStanding = true;
-    displayMessage(`You chose to stand. Dealer's turn.`, 'info');
-    updateHandUI(dealer.hand, 'dealerCards', false);
-    updateHandUI(dealer.hand, 'dealerCards', true);
-    let dealerScore = calculateScore(dealer.hand);
-    console.log('dealer score after initial cards:', dealerScore); // debugging
-    if (dealerScore === 21 && dealer.hand.length === 2) {
-        displayMessage('Dealer has Blackjack! Dealer wins this round.', 'error');
-        checkWinner();
-        return;
+    console.log('${currentPlayer.name} chose to stand'); // debugging
+    const allPlayersDone = players.every(player => player.isStanding || player.isBusted);
+    if (allPlayersDone) {
+        console.log('all player done. move to dealer turn') // debugging
+        dealerTurn();
+    } else {
+        nextPlayerTurn();
     }
-    while (dealerScore < 17){
-        const newCard = dealCard(dealer.hand);
-        console.log('Dealer drew a card:', newCard); // debugging
-        updateHandUI(dealer.hand, 'dealerCards', false);
-        // recalculation after subsequent draws
-        dealerScore = calculateScore(dealer.hand);
-        console.log('dealer score after drawing card: ', dealerScore); // debugging
-    }
-    console.log('Dealer total before drawing:', calculateScore(dealer.hand)); // debugging
-    if (dealerScore > 17) {
-        console.log('dealer dont need to draw more cards.');
-        updateHandUI(dealer.hand, 'dealerCards', true);
-        checkWinner();
-        return;
-    }
-    updateHandUI(dealer.hand, 'dealerCards', true);
-    console.log('final dealer score: ', dealerScore); // debugging
-    checkWinner();
 }
 window.handleStand = handleStand;
 
@@ -332,19 +344,17 @@ function handleReset() {
     updateUI();
 }
 
-function startGameControls() {
-    console.log('startGameControls executed'); // debugging
-    playerNameInput.disabled = false;
-    startGameButton.disabled = false;
-    betAmountInput.disabled = true;
-    console.log('Bet amount input disabled:', betAmountInput.disabled); // debugging
-    betButton.disabled = true;
-    console.log("Bet button initial state in startGameControls:", betButton.disabled); // debugging
-    hitButton.disabled = true;
-    standButton.disabled = true;
-    cashOutButton.disabled = true;
-    resetButton.disabled = true;
+function presetControls() {
+    console.log('presetControls executed'); // debugging
+    bettingControls.style.display = 'none';
+    gameControls.style.display = 'none';
     displayMessage('Enter your name and click "Start Game" to begin.', 'info');
+}
+
+function startGameControls() {
+    playerSetupSection.style.display ='none';
+    bettingControls.style.display = '';
+    gameControls.style.display = '';
 }
 
 function betGameControls() {
@@ -393,60 +403,90 @@ function calculateScore(hand) {
     return total;
 }
 
+function nextPlayerTurn() {
+    currentPlayerIndex++;
+    if (currentPlayerIndex < players.length) {
+        displayMessage(`${players[currentPlayerIndex].name}, it's your turn!`);
+        updateHandUI(players[currentPlayerIndex].hand, 'playerCards');
+    } else {
+        dealerTurn();
+    }
+}
+
+function dealerTurn() {
+    displayMessage(`Dealer's turn...`);
+    updateHandUI(dealer.hand, 'dealerCards', false); // reveal dealer cards
+    while (calculateScore(dealer.hand) < 17) {
+        dealer.hand.push(dealCard(deck));
+    }
+    checkWinner();
+}
+
+function resetRound() {
+    currentPlayerIndex = 0;
+    deck = shuffleDeck(createDeck());
+    players.forEach(player => {
+        player.hand = [];
+        player.bet = 0;
+        player.isStanding = false;
+        player.isBusted = false;
+    });
+    dealer.hand = [];
+    updateUI();
+    displayMessage('Round reset. Place your bets to start!');
+}
+
 // Check winner of round
 function checkWinner() {
-    const playerScore = calculateScore(currentPlayer.hand);
     const dealerScore = calculateScore(dealer.hand);
-    // dealer && player BJ
-    if (playerScore === 21 && currentPlayer.hand.length === 2 && dealerScore === 21 && dealer.hand.length === 2) {
-        // currentPlayer.money += currentPlayer.bet;
-        displayMessage(`Both player and dealer have Blackjack! It's a tie.`, 'info');
-        endRound();
-        return;
-    }
-    // player BJ
-    if (playerScore === 21 && currentPlayer.hand.length === 2) {
-        currentPlayer.money += currentPlayer.bet * 2.5; // 3:2 payout
-        displayMessage('Blackjack! Player wins with a 3:2 payout', 'success');
-        cashOutButton.disabled = false;
-        resetButton.disabled = false;
-        endRound();
-        return;
-    }
-    // dealer BJ
-    if (dealerScore === 21 && dealer.hand.length === 2) {
-        displayMessage('Dealer has Blackjack! Dealer wins this round.', 'error');
-        endRound();
-        return;
-    }
-    // player bust
-    if (playerScore > 21) {
-        displayMessage('Player busts! Dealer wins this round.', 'error');
-        endRound();
-        return;
-    }
-    // dealer bust
-    if (dealerScore > 21) {
-        currentPlayer.money += currentPlayer.bet * 2;
-        displayMessage('Dealer busts! Player wins this round!', 'success');
-        endRound();
-        return;
-    }
-    // tie
-    if (playerScore === dealerScore) {
-        currentPlayer.money += currentPlayer.bet; // bet return to player
-        displayMessage(`It's a tie! Bet returned.`, 'info');
-        endRound();
-        return;
-    }
-    // normal win/loss
-    if (playerScore > dealerScore) {
-        currentPlayer.money += currentPlayer.bet * 2;
-        displayMessage('Player wins this round!', 'success');
-    } else {
-        displayMessage('Dealer wins this round!', 'error');
-    }
-    endRound(); 
+    players.forEach(player => {
+        const playerScore = calculateScore(player.hand);
+        // dealer && player BJ
+        if (playerScore === 21 && player.hand.length === 2 && dealerScore === 21 && dealer.hand.length === 2) {
+            // currentPlayer.money += currentPlayer.bet;
+            displayMessage(`Both ${player.name} and dealer have Blackjack! It's a tie.`, 'info');
+            player.money += player.bet;
+            return;
+        }
+        // player BJ
+        if (playerScore === 21 && player.hand.length === 2) {
+            player.money += player.bet * 2.5; // 3:2 payout
+            displayMessage(`${player.name} wins with a Blackjackand receives a 3:2 payout!`, 'success');
+            return;
+        }
+        // dealer BJ
+        if (dealerScore === 21 && dealer.hand.length === 2) {
+            displayMessage(`Dealer has Blackjack! ${player.name} loses this round.`, 'error');
+            return;
+        }
+        // player bust
+        if (playerScore > 21) {
+            displayMessage(`${player.name} busts. Dealer wins!`, 'error');
+        } 
+        // dealer bust
+        if (dealerScore > 21) {
+            player.money += player.bet * 2;
+            displayMessage(`${player.name} wins! Dealer busts.`, 'success');
+            return;
+        }
+        // normal win/loss
+        if (playerScore > dealerScore) {
+            player.money += player.bet * 2;
+            displayMessage(`${player.name} wins with a higher score than the dealer!`, 'success');
+        }
+        // tie
+        else if (playerScore === dealerScore) {
+            player.money += player.bet; // bet return to player
+            displayMessage(`${player.name} ties with the dealer! Bet returned.`, 'info');
+            return;
+        } 
+        // dealer win
+        else {
+            displayMessage(`Dealer wins against ${player.name}.`, 'error');
+        }
+    });
+    renderLeaderboard(leaderboard); // update dynamically with new scores
+    resetRound(); // prep for next round
 }
 
 /*----------- Event Listeners ----------*/
@@ -455,9 +495,11 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('DOMContentLoaded started'); // debugging
     loadLeaderboard(); // load from localStorage 
     // startGame(1); // start with 1 player for demo first
-    startGameControls();
-    displayMessage('Enter your name and click "Start Game" to begin.', 'info');
+    presetControls();
+    displayMessage('Welcome to Blackjack! Enter # players and click "Setup Players" to begin.', 'info');
 });
+
+startSetupButton.addEventListener('click', startSetup);
 
 startGameButton.addEventListener('click', handleNameInput);
 
@@ -475,4 +517,4 @@ resetButton.addEventListener('click', handleReset);
 
 /*--------------- Exports --------------*/
 
-export {calculateScore};
+export {calculateScore, players, currentPlayerIndex};
