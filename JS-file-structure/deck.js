@@ -4,9 +4,9 @@
 
 /*-------------- Constants -------------*/
 
-const suits = ['Clubs', 'Diamonds', 'Hearts', 'Spades']
+const suits = ['Clubs', 'Diamonds', 'Hearts', 'Spades'];
 
-const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace']
+const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
 
 /*---------- Variables (state) ---------*/
 
@@ -17,15 +17,16 @@ const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'K
 /*-------------- Functions -------------*/
 
 export function createDeck() {
+    const suits = ['Clubs', 'Diamonds', 'Hearts', 'Spades'];
+    const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
     let deck = [];
     suits.forEach(suit => {
         ranks.forEach(rank => {
-            let card = {
+            deck.push({
                 suit: suit,
                 rank: rank,
                 value: getValue(rank)
-            };
-            deck.push(card);
+            });
         });
     });
     return deck;
