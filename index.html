@@ -16,6 +16,16 @@
         </nav>
     </header>
     <div id="gameContainer">
+        <section id="playerSetupSection">
+            <div class="playerSetup">
+                <label for="numPlayers">Select number of players (1-6): </label>
+                <input type="number" id="numPlayers" min="1" max="6" value="1">
+                <button id="startSetupButton">Setup Players</button>
+            </div>
+            <div class="nameInput" id="nameInputContainer">
+                
+            </div>
+        </section>
         <section id="dealerArea">
             <h2>Dealer's Hand: </h2>
             <div id="dealerCards" class="cards"></div>
