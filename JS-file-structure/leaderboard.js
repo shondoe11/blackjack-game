@@ -63,8 +63,6 @@ function loadLeaderboard() {
     leaderboard = Array.isArray(leaderboard)?leaderboard: []; // make sure isArray
     console.log('Loaded leaderboard:', leaderboard); // step 5 test
 }
-// call function during game start
-loadLeaderboard();
 
 /*----------- Event Listeners ----------*/
 
