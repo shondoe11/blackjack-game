@@ -1,6 +1,6 @@
 /*--------------- Imports --------------*/
 
-import { calculateScore } from "./gameLogic.js";
+import { calculateScore, players, currentPlayerIndex } from './gameLogic.js';
 
 /*-------------- Constants -------------*/
 
@@ -16,7 +16,7 @@ const leaderboardList = document.getElementById('leaderboardList');
 
 /*-------------- Functions -------------*/
 
-// displaying my card images
+// displaying card images
 function updateHandUI(hand, handElementId, revealAll = true) {
     const handElement = document.getElementById(handElementId);
     if (!handElement) {
@@ -29,28 +29,41 @@ function updateHandUI(hand, handElementId, revealAll = true) {
     hand.forEach((card, index) => {
         const cardImg = document.createElement('img');
         if (!revealAll && index === 0) {
-            // face-down card, dealer's first card
-            cardImg.src = `./IMG-assets/cards/back_of_card.png`;
+            // dealer face down card
+            cardImg.src = `./IMG-assets/cards/back_of_card.png`; // face down card src
+            cardImg.alt = 'Face Down Card';
             hasFaceDownCard = true;
         } else {
-            // show actual card
+            // show card when revealAll = true
             cardImg.src = `./IMG-assets/cards/${card.rank.toLowerCase()}_of_${card.suit.toLowerCase()}.png`;
+            cardImg.alt = `${card.rank} of ${card.suit}`;
             totalScore += card.value;
         }
-        cardImg.alt = `${card.rank} of ${card.suit}`;
-        cardImg.classList.add('card');
+        cardImg.classList.add('card'); // styling application
         handElement.appendChild(cardImg);
     });
+    // update score display
     if (handElementId === 'dealerCards') {
         const dealerScoreElement = document.getElementById('dealerScore');
         if (hasFaceDownCard) {
-            dealerScoreElement.textContent = 'Total: ??';
+            dealerScoreElement.textContent = 'Total: ??'; // Hide total score if face down card avail
         } else {
-            // account for aces
-            totalScore = calculateScore(hand);
-            dealerScoreElement.textContent = `Total: ${totalScore}`
+            totalScore = calculateScore(hand); // calculate score with aces logic
+            dealerScoreElement.textContent = `Total: ${totalScore}`;
         }
+    } else {
+        // update player hands directly
+        const playerScoreElement = document.getElementById('playerScore');
+        totalScore = calculateScore(hand); // aces logic
+        playerScoreElement.textContent = `Total: ${totalScore}`;
     }
+}
+
+function updateUI() {
+    const currentPlayer = players[currentPlayerIndex];
+    document.getElementById('playerHandHeading').textContent = `${currentPlayer.name}'s Hand:`;
+    document.getElementById('playerMoney').textContent = `Money: $${currentPlayer.money}`;
+    document.getElementById('playerScore').textContent = `Bet: $${currentPlayer.bet}`;
 }
 
 // render dynamic leaderboard
@@ -71,4 +84,4 @@ function renderLeaderboard(leaderboard = []) {
 
 /*--------------- Exports --------------*/
 
-export {updateHandUI, renderLeaderboard};
+export { updateHandUI, updateUI, renderLeaderboard };
