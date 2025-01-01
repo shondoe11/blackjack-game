@@ -15,7 +15,6 @@ function startApp() {
     console.log('Blackjack App started');
     //load related game logics and startgame
     loadLeaderboard();
-    startGame(1); // start with 1 player for now 
 }
 
 /*----------- Event Listeners ----------*/
