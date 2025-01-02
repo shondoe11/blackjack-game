@@ -44,7 +44,8 @@ export function shuffleDeck(deck) { // Fisher-Yates algo
     for (let i = deck.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [deck[i], deck[j]] = [deck[j], deck[i]]; // swap elements
-    } return deck;
+    } 
+    return deck;
 }
 
 // [step 1 test]
