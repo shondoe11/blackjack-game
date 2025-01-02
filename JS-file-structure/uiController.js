@@ -1,6 +1,6 @@
 /*--------------- Imports --------------*/
 
-import { calculateScore, players, currentPlayerIndex } from './gameLogic.js';
+import { calculateScore, players, currentPlayerIndex, dealer } from "./gameLogic.js";
 
 /*-------------- Constants -------------*/
 
@@ -14,56 +14,69 @@ import { calculateScore, players, currentPlayerIndex } from './gameLogic.js';
 
 const leaderboardList = document.getElementById('leaderboardList');
 
+const playerHandHeading = document.getElementById('playerHandHeading');
+
+const playerMoneyDisplay = document.getElementById('playerMoney');
+
+const playerScoreDisplay = document.getElementById('playerScore');
+
+const dealerScoreDisplay = document.getElementById('dealerScore');
+
 /*-------------- Functions -------------*/
 
-// displaying card images
+// displaying my card images
 function updateHandUI(hand, handElementId, revealAll = true) {
     const handElement = document.getElementById(handElementId);
     if (!handElement) {
         console.error(`Element with ID ${handElementId} not found.`);
         return;
     }
+    console.log(`updating hand UI for ${handElementId} with hand:`, hand);
     handElement.innerHTML = ''; // clear previous cards
     let totalScore = 0;
     let hasFaceDownCard = false;
     hand.forEach((card, index) => {
         const cardImg = document.createElement('img');
         if (!revealAll && index === 0) {
-            // dealer face down card
-            cardImg.src = `./IMG-assets/cards/back_of_card.png`; // face down card src
-            cardImg.alt = 'Face Down Card';
+            // face-down card, dealer's first card
+            cardImg.src = `./IMG-assets/cards/back_of_card.png`;
             hasFaceDownCard = true;
         } else {
-            // show card when revealAll = true
+            // show actual card
             cardImg.src = `./IMG-assets/cards/${card.rank.toLowerCase()}_of_${card.suit.toLowerCase()}.png`;
-            cardImg.alt = `${card.rank} of ${card.suit}`;
             totalScore += card.value;
         }
-        cardImg.classList.add('card'); // styling application
+        cardImg.alt = `${card.rank} of ${card.suit}`;
+        cardImg.classList.add('card');
         handElement.appendChild(cardImg);
     });
-    // update score display
     if (handElementId === 'dealerCards') {
         const dealerScoreElement = document.getElementById('dealerScore');
         if (hasFaceDownCard) {
-            dealerScoreElement.textContent = 'Total: ??'; // Hide total score if face down card avail
+            dealerScoreElement.textContent = 'Total: ??';
         } else {
-            totalScore = calculateScore(hand); // calculate score with aces logic
-            dealerScoreElement.textContent = `Total: ${totalScore}`;
+            // account for aces
+            totalScore = calculateScore(hand);
+            dealerScoreElement.textContent = `Total: ${totalScore}`
         }
-    } else {
-        // update player hands directly
-        const playerScoreElement = document.getElementById('playerScore');
-        totalScore = calculateScore(hand); // aces logic
-        playerScoreElement.textContent = `Total: ${totalScore}`;
     }
+    console.log(`updated hand for ${handElementId}:`, hand);
 }
 
 function updateUI() {
     const currentPlayer = players[currentPlayerIndex];
-    document.getElementById('playerHandHeading').textContent = `${currentPlayer.name}'s Hand:`;
-    document.getElementById('playerMoney').textContent = `Money: $${currentPlayer.money}`;
-    document.getElementById('playerScore').textContent = `Bet: $${currentPlayer.bet}`;
+    if (currentPlayer) {
+        updateHandUI(currentPlayer.hand, 'playerCards');
+        playerMoneyDisplay.textContent = `Money: $${currentPlayer.money}`;
+        playerScoreDisplay.textContent = `Score: ${calculateScore(currentPlayer.hand)}`;
+    }
+    if (dealer.hand) {
+        updateHandUI(dealer.hand, 'dealerCards', dealer.hand.length > 1);
+        dealerScoreDisplay.textContent = dealer.hand.length > 1
+            ? `Total: ${calculateScore(dealer.hand)}`
+            : 'Total: ??';
+    }
+    renderLeaderboard(players);
 }
 
 // render dynamic leaderboard
@@ -84,4 +97,4 @@ function renderLeaderboard(leaderboard = []) {
 
 /*--------------- Exports --------------*/
 
-export { updateHandUI, updateUI, renderLeaderboard };
+export {updateHandUI, updateUI, renderLeaderboard};
