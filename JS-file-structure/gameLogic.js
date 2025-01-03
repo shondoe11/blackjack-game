@@ -81,6 +81,43 @@ function displayMessage(message, type ='info') {
     }
 }
 
+function calculateScore(hand) {
+    let total = 0;
+    let aces = 0;
+    hand.forEach (card => {
+        total += card.value;
+        if (card.rank === 'Ace') aces++;
+    });
+    while (total > 21 && aces > 0) {
+        total -= 10; // conversion for Ace (11 || 1)
+        aces--;
+    }
+    return total;
+}
+
+function drawCardAndCalculateScore(hand, elementId) {
+    const card = dealCard(hand);
+    updateHandUI(hand, elementId);
+    return calculateScore(hand);
+}
+
+// deal card to player
+function dealCard(hand) {
+    if (!deck || deck.length === 0) {
+        console.error('The deck is empty! Cannot deal a card');
+        return null;
+    }
+    const card = deck.pop();
+    console.log('dealt card:', card); // debugging
+    console.log('deck after dealing:', deck); // debugging
+    if (!card) {
+        console.error('no card dealt. deck might be corrupted.');
+        return null;
+    }
+    hand.push(card);
+    return card;
+}
+
 // start player setup
 function startSetup() {
     const numPlayersInput = document.getElementById('numPlayers').value;
@@ -147,6 +184,12 @@ function startGame() {
 }
 window.startGame = startGame; // step 5 test gameStart
 
+function presetControls() {
+    console.log('presetControls executed'); // debugging
+    bettingControls.style.display = 'none';
+    gameControls.style.display = 'none';
+    displayMessage('Enter your name and click "Start Game" to begin.', 'info');
+}
 
 // placing bet
 function handleBet() {
@@ -174,23 +217,6 @@ function handleBet() {
     betGameControls();
 }
 window.handleBet = handleBet; // step 5 test betting mechanics
-
-// deal card to player
-function dealCard(hand) {
-    if (!deck || deck.length === 0) {
-        console.error('The deck is empty! Cannot deal a card');
-        return null;
-    }
-    const card = deck.pop();
-    console.log('dealt card:', card); // debugging
-    console.log('deck after dealing:', deck); // debugging
-    if (!card) {
-        console.error('no card dealt. deck might be corrupted.');
-        return null;
-    }
-    hand.push(card);
-    return card;
-}
 
 function dealInitialCards() {
     players.forEach(player => {
@@ -226,6 +252,38 @@ function handleStand() {
     nextPlayerTurn();
 }
 window.handleStand = handleStand;
+
+function nextPlayerTurn() {
+    console.log('nextPlayerTurn called'); // debugging
+    currentPlayerIndex++;
+    if (currentPlayerIndex < players.length) {
+        currentPlayer = players[currentPlayerIndex];
+        displayMessage(`${currentPlayer.name}, it's your turn! Place your bet.`, 'info');
+        betAmountInput.disabled = false;
+        betButton.disabled = false;
+        hitButton.disabled = true;
+        standButton.disabled = true;
+        updateUI();
+    } else {
+        console.log(`All players have taken their turns. Dealer's turn now.`);
+        setTimeout(() => {
+            dealerTurn();
+        }, 2000);
+    }
+}
+
+function dealerTurn() {
+    console.log('dealerTurn called'); // debugging
+    setTimeout(() => {
+        displayMessage('Dealer reveals their cards. Calculating winner...', 'info');
+        setTimeout(() => {
+            while (calculateScore(dealer.hand) < 17) {
+                drawCardAndCalculateScore(dealer.hand, 'dealerCards');
+            }
+            checkWinner();
+        }, 2000);
+    }, 2000);
+}
 
 function handleCashOut() {
     const currentPlayer = players[currentPlayerIndex];
@@ -276,6 +334,52 @@ function endRound() {
 }
 window.endRound = endRound // step 5 test bet mechanics
 
+// Check winner of round
+function checkWinner() {
+    console.log('checkWinner called'); // debugging
+    const dealerScore = calculateScore(dealer.hand);
+    players.forEach(player => {
+        const playerScore = calculateScore(player.hand);
+        if (player.isBusted) {
+            displayMessage(`${player.name} busts! Dealer wins this round.`, 'error');
+        } else if (dealerScore > 21 || playerScore > dealerScore) {
+            player.money += player.currentBet * 2;
+            displayMessage(`${player.name} wins this round and earns $${player.currentBet * 2}!`, 'success');
+        } else if (playerScore === dealerScore) {
+            player.money += player.currentBet;
+            displayMessage(`It's a tie! ${player.name}'s bet is returned.`, 'info');
+        } else {
+            displayMessage(`${player.name} loses to the dealer's ${dealerScore}.`, 'error');
+        }
+        updateLeaderboard(player);
+    });
+    setTimeout(() => {
+        renderLeaderboard(players);
+        resetRound();
+    }, 3000);
+}
+
+function resetRound() {
+    console.log('resetRound called'); // debugging
+    currentPlayerIndex = 0;
+    deck = shuffleDeck(createDeck());
+    players.forEach(player => {
+        player.hand = [];
+        player.bet = 0;
+        player.isStanding = false;
+        player.isBusted = false;
+    });
+    dealer.hand = [];
+    updateHandUI([], 'dealerCards');
+    updateHandUI([], 'playerCards');
+    updateUI();
+    displayMessage('Round reset. Place your bets to start!', 'info');
+    betAmountInput.disabled = false;
+    betButton.disabled = false;
+    hitButton.disabled = true;
+    standButton.disabled = true;
+}
+
 function handleReset() {
     console.log('Resetting the game...'); // debugging
     players.forEach(player => {
@@ -298,13 +402,6 @@ function handleReset() {
     }
     currentMessage = '';
     updateUI();
-}
-
-function presetControls() {
-    console.log('presetControls executed'); // debugging
-    bettingControls.style.display = 'none';
-    gameControls.style.display = 'none';
-    displayMessage('Enter your name and click "Start Game" to begin.', 'info');
 }
 
 function startGameControls() {
@@ -348,79 +445,6 @@ function resetGameControls() {
     displayMessage('Enter your name and click "Start Game" to begin.', 'info');
 }
 
-function calculateScore(hand) {
-    let total = 0;
-    let aces = 0;
-    hand.forEach (card => {
-        total += card.value;
-        if (card.rank === 'Ace') aces++;
-    });
-    while (total > 21 && aces > 0) {
-        total -= 10; // conversion for Ace (11 || 1)
-        aces--;
-    }
-    return total;
-}
-
-function drawCardAndCalculateScore(hand, elementId) {
-    const card = dealCard(hand);
-    updateHandUI(hand, elementId);
-    return calculateScore(hand);
-}
-
-function nextPlayerTurn() {
-    console.log('nextPlayerTurn called'); // debugging
-    currentPlayerIndex++;
-    if (currentPlayerIndex < players.length) {
-        currentPlayer = players[currentPlayerIndex];
-        displayMessage(`${currentPlayer.name}, it's your turn! Place your bet.`, 'info');
-        betAmountInput.disabled = false;
-        betButton.disabled = false;
-        hitButton.disabled = true;
-        standButton.disabled = true;
-        updateUI();
-    } else {
-        console.log(`All players have taken their turns. Dealer's turn now.`);
-        setTimeout(() => {
-            dealerTurn();
-        }, 2000);
-    }
-}
-
-function dealerTurn() {
-    console.log('dealerTurn called'); // debugging
-    setTimeout(() => {
-        displayMessage('Dealer reveals their cards. Calculating winner...', 'info');
-        setTimeout(() => {
-            while (calculateScore(dealer.hand) < 17) {
-                drawCardAndCalculateScore(dealer.hand, 'dealerCards');
-            }
-            checkWinner();
-        }, 2000);
-    }, 2000);
-}
-
-function resetRound() {
-    console.log('resetRound called'); // debugging
-    currentPlayerIndex = 0;
-    deck = shuffleDeck(createDeck());
-    players.forEach(player => {
-        player.hand = [];
-        player.bet = 0;
-        player.isStanding = false;
-        player.isBusted = false;
-    });
-    dealer.hand = [];
-    updateHandUI([], 'dealerCards');
-    updateHandUI([], 'playerCards');
-    updateUI();
-    displayMessage('Round reset. Place your bets to start!', 'info');
-    betAmountInput.disabled = false;
-    betButton.disabled = false;
-    hitButton.disabled = true;
-    standButton.disabled = true;
-}
-
 function checkAndAwardBlackjack(player) {
     const playerScore = calculateScore(player.hand);
     if (playerScore === 21 && player.hand.length === 2) {
@@ -434,31 +458,6 @@ function checkAndAwardBlackjack(player) {
         return true;
     }
     return false;
-}
-
-// Check winner of round
-function checkWinner() {
-    console.log('checkWinner called'); // debugging
-    const dealerScore = calculateScore(dealer.hand);
-    players.forEach(player => {
-        const playerScore = calculateScore(player.hand);
-        if (player.isBusted) {
-            displayMessage(`${player.name} busts! Dealer wins this round.`, 'error');
-        } else if (dealerScore > 21 || playerScore > dealerScore) {
-            player.money += player.currentBet * 2;
-            displayMessage(`${player.name} wins this round and earns $${player.currentBet * 2}!`, 'success');
-        } else if (playerScore === dealerScore) {
-            player.money += player.currentBet;
-            displayMessage(`It's a tie! ${player.name}'s bet is returned.`, 'info');
-        } else {
-            displayMessage(`${player.name} loses to the dealer's ${dealerScore}.`, 'error');
-        }
-        updateLeaderboard(player);
-    });
-    setTimeout(() => {
-        renderLeaderboard(players);
-        resetRound();
-    }, 3000);
 }
 
 /*----------- Event Listeners ----------*/
