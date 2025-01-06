@@ -1,6 +1,6 @@
 /*--------------- Imports --------------*/
 
-import { calculateScore, players, currentPlayerIndex, dealer } from "./gameLogic.js";
+import { calculateScore, players, currentPlayer, currentPlayerIndex, dealer } from "./gameLogic.js";
 
 /*-------------- Constants -------------*/
 
@@ -14,69 +14,60 @@ import { calculateScore, players, currentPlayerIndex, dealer } from "./gameLogic
 
 const leaderboardList = document.getElementById('leaderboardList');
 
-const playerHandHeading = document.getElementById('playerHandHeading');
+const playerHand = document.getElementById('playerHand');
 
-const playerMoneyDisplay = document.getElementById('playerMoney');
+const playerMoney = document.getElementById('playerMoney');
 
-const playerScoreDisplay = document.getElementById('playerScore');
+const playerBet = document.getElementById('playerBet');
 
-const dealerScoreDisplay = document.getElementById('dealerScore');
+const playerScore = document.getElementById('playerScore');
+
+const dealerScore = document.getElementById('dealerScore');
 
 /*-------------- Functions -------------*/
+
+function updateCurrentPlayerUI() {
+    const { name, hand, money, currentBet } = currentPlayer;
+    playerHand.textContent = `${name}'s Hand:`;
+    playerMoney.textContent = `Money: $${money}`;
+    playerBet.textContent = `Bet: $${currentBet}`;
+    playerScore.textContent = `Score: ${calculateScore(hand)}`;
+    updateHandUI(hand, 'playerCards');
+    console.log(`updated UI for ${name}`);
+}
 
 // displaying my card images
 function updateHandUI(hand, handElementId, revealAll = true) {
     const handElement = document.getElementById(handElementId);
     if (!handElement) {
-        console.error(`Element with ID ${handElementId} not found.`);
+        console.error(`element with ID ${handElementId} not found.`);
         return;
     }
     console.log(`updating hand UI for ${handElementId} with hand:`, hand);
-    handElement.innerHTML = ''; // clear previous cards
-    let totalScore = 0;
-    let hasFaceDownCard = false;
+    handElement.innerHTML = '';
     hand.forEach((card, index) => {
         const cardImg = document.createElement('img');
         if (!revealAll && index === 0) {
-            // face-down card, dealer's first card
+            // dealer first card face down
             cardImg.src = `./IMG-assets/cards/back_of_card.png`;
-            hasFaceDownCard = true;
         } else {
-            // show actual card
+            // dealer second card face up
             cardImg.src = `./IMG-assets/cards/${card.rank.toLowerCase()}_of_${card.suit.toLowerCase()}.png`;
-            totalScore += card.value;
         }
         cardImg.alt = `${card.rank} of ${card.suit}`;
         cardImg.classList.add('card');
         handElement.appendChild(cardImg);
     });
-    if (handElementId === 'dealerCards') {
-        const dealerScoreElement = document.getElementById('dealerScore');
-        if (hasFaceDownCard) {
-            dealerScoreElement.textContent = 'Total: ??';
-        } else {
-            // account for aces
-            totalScore = calculateScore(hand);
-            dealerScoreElement.textContent = `Total: ${totalScore}`
-        }
-    }
     console.log(`updated hand for ${handElementId}:`, hand);
 }
 
 function updateUI() {
-    const currentPlayer = players[currentPlayerIndex];
-    if (currentPlayer) {
-        updateHandUI(currentPlayer.hand, 'playerCards');
-        playerMoneyDisplay.textContent = `Money: $${currentPlayer.money}`;
-        playerScoreDisplay.textContent = `Score: ${calculateScore(currentPlayer.hand)}`;
+    if (playerHand) {
+        playerHand.textContent = `${currentPlayer.name}'s Hand:`;
     }
-    if (dealer.hand) {
-        updateHandUI(dealer.hand, 'dealerCards', dealer.hand.length > 1);
-        dealerScoreDisplay.textContent = dealer.hand.length > 1
-            ? `Total: ${calculateScore(dealer.hand)}`
-            : 'Total: ??';
-    }
-    renderLeaderboard(players);
+    playerMoney.textContent = `Money: $${currentPlayer.money}`;
+    playerBet.textContent = `Bet: $${currentPlayer.bet}`;
+    playerScore.textContent = `Score: $${currentPlayer.score}`;
 }
 
 // render dynamic leaderboard
@@ -97,4 +88,4 @@ function renderLeaderboard(leaderboard = []) {
 
 /*--------------- Exports --------------*/
 
-export {updateHandUI, updateUI, renderLeaderboard};
+export {updateCurrentPlayerUI, updateHandUI, updateUI, playerHand, renderLeaderboard};
