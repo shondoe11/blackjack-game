@@ -6,7 +6,7 @@ import { createDeck, shuffleDeck } from './deck.js';
 
 import  { leaderboard, loadLeaderboard, updateLeaderboard, saveLeaderboard } from './leaderboard.js';
 
-import { updateCurrentPlayerUI, updateHandUI, updateUI, renderLeaderboard } from './uiController.js';
+import { updateCurrentPlayerUI, updateHandUI, updateUI, renderLeaderboard, formatMoney } from './uiController.js';
 
 /*-------------- Constants -------------*/
 
@@ -38,8 +38,6 @@ const playerSetupSection = document.getElementById('playerSetupSection');
 const textPromptArea = document.getElementById('textPromptArea');
 
 const nameInputContainer = document.querySelector('.nameInput');
-
-const playerNameInput = document.getElementById('playerName');
 
 const startGameButton = document.getElementById('startGameButton');
 
@@ -214,7 +212,7 @@ function handleBet() {
     updateCurrentPlayerUI();
     dealInitialCards(currentPlayer);
     const playerScore = calculateScore(currentPlayer.hand);
-    displayMessage(`Bet of $${betAmount} placed. ${currentPlayer.name}'s score is ${playerScore}. Good luck!`, 'success');
+    displayMessage(`Bet of ${formatMoney(betAmount)} placed. ${currentPlayer.name}'s score is ${playerScore}. Good luck!`, 'success');
     if (checkAndAwardBlackjack(currentPlayer)) {
         console.log(`${currentPlayer.name} has Blackjack!`);
         setTimeout(() => {
@@ -301,7 +299,7 @@ function handleCashOut() {
         // disable cash out button to prevent subsequent clicks, which doesnt do anything anyway
         cashOutButton.disabled = true;
         cashOutButton.classList.add('disabled');
-        console.log('Cash-out button disabled.');
+        console.log('cash-out button disabled');
         // disable further actions of currentPlayer
         disableGameControls();
         //re-enabled reset button as only option for currentPlayer
@@ -324,7 +322,7 @@ function endRound() {
     dealer.hand = [];
     deck = shuffleDeck(createDeck());
     updateLeaderboard(currentPlayer);
-    console.log('Leaderboard before rendering:', leaderboard); // Debugging
+    console.log('leaderboard before rendering:', leaderboard); // Debugging
     renderLeaderboard(leaderboard);
     updateUI();
     // UI prompt
@@ -348,7 +346,7 @@ function checkWinner() {
             displayMessage(`${player.name} busts! Dealer wins this round.`, 'error');
         } else if (dealerScore > 21 || playerScore > dealerScore) {
             player.money += player.currentBet * 2;
-            displayMessage(`${player.name} wins this round and earns $${player.currentBet * 2}!`, 'success');
+            displayMessage(`${player.name} wins this round and earns ${formatMoney(player.currentBet) * 2}!`, 'success');
         } else if (playerScore === dealerScore) {
             player.money += player.currentBet;
             displayMessage(`It's a tie! ${player.name}'s bet is returned.`, 'info');
@@ -409,7 +407,7 @@ function handleReset() {
 }
 
 function startGameControls() {
-    playerSetupSection.style.display ='none';
+    playerSetupSection.style.display = 'none';
     bettingControls.style.display = '';
     gameControls.style.display = '';
     betAmountInput.disabled = false;
@@ -439,8 +437,7 @@ function disableGameControls() {
 
 // enable game controls after reset activates
 function resetGameControls() {
-    playerNameInput.disabled = false;
-    playerNameInput.value = '';
+    playerSetupSection.style.display = '';
     startGameButton.disabled = false;
     betAmountInput.disabled = true;
     betButton.disabled = true;
@@ -480,9 +477,7 @@ startSetupButton.addEventListener('click', startSetup);
 
 startGameButton.addEventListener('click', handleNameInput);
 
-betAmountInput.addEventListener('change', handleBet);
-
-document.getElementById('betButton').addEventListener('click', handleBet);
+betButton.addEventListener('click', handleBet);
 
 hitButton.addEventListener('click', handleHit);
 
