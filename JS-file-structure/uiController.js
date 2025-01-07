@@ -29,8 +29,8 @@ const dealerScore = document.getElementById('dealerScore');
 function updateCurrentPlayerUI() {
     const { name, hand, money, currentBet } = currentPlayer;
     playerHand.textContent = `${name}'s Hand:`;
-    playerMoney.textContent = `Money: $${money}`;
-    playerBet.textContent = `Bet: $${currentBet}`;
+    playerMoney.textContent = `Money: ${formatMoney(money)}`;
+    playerBet.textContent = `Bet: ${formatMoney(currentBet)}`;
     playerScore.textContent = `Score: ${calculateScore(hand)}`;
     updateHandUI(hand, 'playerCards');
     console.log(`updated UI for ${name}`);
@@ -65,9 +65,9 @@ function updateUI() {
     if (playerHand) {
         playerHand.textContent = `${currentPlayer.name}'s Hand:`;
     }
-    playerMoney.textContent = `Money: $${currentPlayer.money}`;
-    playerBet.textContent = `Bet: $${currentPlayer.bet}`;
-    playerScore.textContent = `Score: $${currentPlayer.score}`;
+    playerMoney.textContent = `Money: ${formatMoney(currentPlayer.money)}`;
+    playerBet.textContent = `Bet: ${formatMoney(currentPlayer.bet)}`;
+    playerScore.textContent = `Score: ${calculateScore(currentPlayer.hand)}`;
 }
 
 // render dynamic leaderboard
@@ -76,10 +76,15 @@ function renderLeaderboard(leaderboard = []) {
     leaderboardList.innerHTML = ''; // clear current leaderboard state first
     leaderboard.forEach(player => {
         const listItem = document.createElement('li');
-        listItem.textContent = `${player.name}: $${player.money}`;
+        listItem.textContent = `${player.name}: ${formatMoney(player.money)}`;
         leaderboardList.appendChild(listItem);
     });
     console.log('Rendered leaderboard:', leaderboard); // step 5 debugging
+}
+
+function formatMoney(value) {
+    const amount = Number(value) || 0;
+    return '$' + amount.toLocaleString('en-US');
 }
 
 /*----------- Event Listeners ----------*/
@@ -88,4 +93,4 @@ function renderLeaderboard(leaderboard = []) {
 
 /*--------------- Exports --------------*/
 
-export {updateCurrentPlayerUI, updateHandUI, updateUI, playerHand, renderLeaderboard};
+export {updateCurrentPlayerUI, updateHandUI, updateUI, playerHand, renderLeaderboard, formatMoney};
