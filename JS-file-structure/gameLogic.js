@@ -297,25 +297,75 @@ function checkAndAwardBlackjack(player) {
 function checkWinner() {
     const dealerScore = calculateScore(dealer.hand);
     console.log('checkWinner called. dealer have:', dealerScore); // debugging
+    let roundResults = [];
+    if (dealerScore > 21) {
+        roundResults.push({
+            isDealer: true,
+            name: 'Dealer',
+            score: dealerScore,
+            outcomeMsg: `Dealer busts with ${dealerScore}`,
+            messageType: 'success'
+        });
+    } else {
+        roundResults.push({
+            isDealer: true,
+            name: 'Dealer',
+            score: dealerScore,
+            outcomeMsg: `Dealer stands with ${dealerScore}`
+        });
+    }
     players.forEach(player => {
         const playerScore = calculateScore(player.hand);
+        let outcomeMsg = '';
+        let messageType = 'info';
         if (player.isBusted) {
-            displayMessage(`${player.name} busts! Dealer wins this round.`, 'error');
+            outcomeMsg = `${player.name} busts! Dealer wins this round.`;
+            messageType = 'error';
         } else if (dealerScore > 21 || playerScore > dealerScore) {
             player.money += player.currentBet * 2;
-            displayMessage(`${player.name} beats the dealer and earns ${formatMoney(player.currentBet * 2)}!`, 'success');
+            outcomeMsg = `${player.name} beats the dealer and earns ${formatMoney(player.currentBet * 2)}!`;
+            messageType = 'success';
         } else if (playerScore === dealerScore) {
             player.money += player.currentBet;
-            displayMessage(`It's a tie! ${player.name}'s bet is returned.`, 'info');
+            outcomeMsg = `It's a tie! ${player.name}'s bet is returned.`;
         } else {
-            displayMessage(`${player.name} loses to the dealer's ${dealerScore}.`, 'error');
+            outcomeMsg = `${player.name} loses to the dealer's ${dealerScore}.`;
+            messageType = 'error';
         }
         updateLeaderboard(player);
+        roundResults.push({
+            isDealer: false,
+            player,
+            score: playerScore,
+            outcomeMsg,
+            messageType
+        });
     });
-    setTimeout(() => {
-        renderLeaderboard(players);
-        resetRound();
-    }, 3000);
+    renderLeaderboard(players);
+    showRoundResults(roundResults);
+}
+
+function showRoundResults(roundResults) {
+    let i = 0; // result array index
+    function showNext() {
+        if (i >= roundResults.length) {
+            // reset if all player results already displayed
+            resetRound();
+            return;
+        }
+        const result = roundResults[i];
+        if (result.isDealer) {
+            updateHandUI(dealer.hand, 'dealerCards', true);
+            displayMessage(result.outcomeMsg, 'info');
+        } else {
+            currentPlayer = result.player; // temp
+            displayMessage(result.outcomeMsg, result.messageType);
+            updateCurrentPlayerUI(); // dynamically updates as messages cycle each player
+        }
+        i++;
+        setTimeout(showNext, 3000); // wait 2s each cycle
+    }
+    showNext(); // start sequence
 }
 
 function resetRound() {
