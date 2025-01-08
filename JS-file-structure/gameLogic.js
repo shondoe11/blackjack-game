@@ -48,7 +48,6 @@ const bettingControls = document.querySelector('.bettingControls')
 const gameControls = document.querySelector('.gameControls')
 
 const betAmountInput = document.getElementById('betAmount');
-window.betAmountInput = betAmountInput; // step 5 test betting mechanics
 
 const betButton = document.getElementById('betButton');
 
@@ -95,12 +94,6 @@ function calculateScore(hand) {
     return total;
 }
 
-function drawCardAndCalculateScore(hand, elementId) {
-    const card = dealCard(hand);
-    updateHandUI(hand, elementId);
-    return calculateScore(hand);
-}
-
 // deal card to player
 function dealCard(hand) {
     if (!deck || deck.length === 0) {
@@ -114,14 +107,28 @@ function dealCard(hand) {
         console.error('no card dealt. deck might be corrupted.');
         return null;
     }
-    hand.push({ ...card }); // spread operator
+    hand.push({ ... card }); // spread operator
     return card;
+}
+
+function dealInitialCards(player) {
+    player.hand = [];
+    dealCard(player.hand);
+    dealCard(player.hand);
+    console.log('initial cards dealt:', 
+        player.name, 
+        player.hand.map(c =>`${c.rank} of ${c.suit}`)
+    );
+    if (player === currentPlayer) {
+        updateHandUI(player.hand, 'playerCards');
+        updateCurrentPlayerUI();
+    }
 }
 
 // start player setup
 function startSetup() {
     const numPlayersDropdown = document.getElementById('numPlayers');
-    numPlayers = Number(numPlayersDropdown.value); // retried numPlayers from player select dropdown
+    numPlayers = Number(numPlayersDropdown.value); // grab numPlayers from player select dropdown
     const nameInputContainer = document.getElementById('nameInputContainer');
     nameInputContainer.innerHTML = ''; // clear previous inputs
     // create name input fields for the selected number of players
@@ -150,13 +157,13 @@ function handleNameInput() {
             isBusted: false
         });
     }
-    console.log('players: ', players); //debugging
-    if (players.length > 0) {
-        console.log('starting the game..');
-        startGame();
-    } else {
+    console.log('players: ', players); // debugging
+    if (players.length === 0) {
         console.error('no players created. game cant start');
+        displayMessage('No players created. Cannot start game.', 'error');
+        return;
     }
+    startGame();
 }
 
 // start game with preset conditions
@@ -164,11 +171,11 @@ function startGame() {
     console.log('Starting the game...');
     currentPlayerIndex = 0; // reset to the player 1
     players = []; // clear previous players
-    // fill players array
+    // fill players array from nameInput
     for (let i = 0; i < numPlayers; i++) {
         const playerName = document.getElementById(`playerName${i + 1}`).value.trim();
         players.push({
-            name: playerName || `Player ${i + 1}`, // Default name if not entered
+            name: playerName || `Player ${i + 1}`, // default name if not entered
             money: initialMoney,
             hand: [],
             bet: 0,
@@ -180,18 +187,11 @@ function startGame() {
         displayMessage('No players found. Please set up players to start the game.', 'error');
         return;
     }
-    currentPlayer = players[currentPlayerIndex]; // set first player as the current player
-    deck = createDeck();
-    deck = shuffleDeck(deck);
-    console.log('Deck shuffled:', deck); // debugging
-    players.forEach(player => {
-        player.hand = [];
-        player.currentBet = 0;
-        player.isStanding = false;
-        player.isBusted = false;
-    });
+    deck = shuffleDeck(createDeck());
     dealer.hand = [];
+    currentPlayer = players[0]; // set first player as the current player
     updateCurrentPlayerUI(); // update UI for the first player
+    console.log('Deck shuffled:', deck); // debugging
     displayMessage(`${currentPlayer.name}, it's your turn! Place your bet.`, 'info');
     startGameControls();
 }
@@ -199,55 +199,42 @@ window.startGame = startGame; // step 5 test gameStart
 
 // placing bet
 function handleBet() {
-    console.log('handleBet called'); // debugging
     const betAmount = Number(betAmountInput.value);
     if (isNaN(betAmount) || betAmount < MIN_BET) {
         return displayMessage('Bet must be at least $50 and a valid number.', 'error');
     }
     if (betAmount > currentPlayer.money) {
-        return displayMessage(`You don't have enough money to place this bet.`, 'error');
+        return displayMessage(`You don't have enough money to bet ${formatMoney(betAmount)}.`, 'error');
     }
     currentPlayer.money -= betAmount;
     currentPlayer.currentBet = betAmount;
-    updateCurrentPlayerUI();
+    currentPlayer.isBusted = false;
+    currentPlayer.isStanding = false;
     dealInitialCards(currentPlayer);
+    updateCurrentPlayerUI();
     const playerScore = calculateScore(currentPlayer.hand);
     displayMessage(`Bet of ${formatMoney(betAmount)} placed. ${currentPlayer.name}'s score is ${playerScore}. Good luck!`, 'success');
     if (checkAndAwardBlackjack(currentPlayer)) {
-        console.log(`${currentPlayer.name} has Blackjack!`);
-        setTimeout(() => {
-            nextPlayerTurn();
-        }, 2000);
-        return;
+    setTimeout(() => nextPlayerTurn(), 2000);
+    return;
     }
     betGameControls();
 }
 window.handleBet = handleBet; // step 5 test betting mechanics
 
-function dealInitialCards() {
-    players.forEach((player) => {
-    player.hand = [dealCard(player.hand), dealCard(player.hand)];
-    });
-    dealer.hand = [dealCard(dealer.hand), dealCard(dealer.hand)];
-    currentPlayer = players[currentPlayerIndex];
-    updateCurrentPlayerUI();
-    updateHandUI(dealer.hand, 'dealerCards', false); // first card face-down
-    console.log('initial cards dealt:', players, dealer);
-}
-
 // handle Hit actions
 function handleHit() {
     const newCard = dealCard(currentPlayer.hand);
-    updateHandUI(currentPlayer.hand, `playerCards-${currentPlayer.name}`);
+    updateHandUI(currentPlayer.hand, 'playerCards');
     const score = calculateScore(currentPlayer.hand);
     if (score > 21) {
         currentPlayer.isBusted = true;
         displayMessage(`${currentPlayer.name} busts with a score of ${score}.`, 'error');
         currentPlayer.currentBet = 0; // deduct bet here if needed
-        nextPlayerTurn();
-    } else {
-        displayMessage(`${currentPlayer.name} hits and their score is now ${score}.`, 'info');
-    }
+        setTimeout(() => nextPlayerTurn(), 2000);
+  } else {
+    displayMessage(`${currentPlayer.name} hits! Score is now ${score}.`, 'info');
+  }
 }
 window.handleHit = handleHit; 
 
@@ -255,13 +242,18 @@ window.handleHit = handleHit;
 function handleStand() {
     console.log(`${currentPlayer.name} chose to stand.`);
     currentPlayer.isStanding = true;
-    nextPlayerTurn();
+    displayMessage(`${currentPlayer.name} stands with a score of ${calculateScore(currentPlayer.hand)}.`, 'info');
+    setTimeout(() => nextPlayerTurn(), 2000);
 }
 window.handleStand = handleStand;
 
 function nextPlayerTurn() {
     currentPlayerIndex++;
     if (currentPlayerIndex >= players.length) {
+        dealer.hand = [];
+        dealCard(dealer.hand);
+        dealCard(dealer.hand);
+        updateHandUI(dealer.hand, 'dealerCards', false); // hide first card
         dealerTurn();
         return;
     }
@@ -276,77 +268,42 @@ function nextPlayerTurn() {
 
 function dealerTurn() {
     console.log('dealerTurn called'); // debugging
+    displayMessage('Dealer reveals their cards...', 'info');
+    // wait 2 second, reveal hidden card
     setTimeout(() => {
-        displayMessage('Dealer reveals their cards. Calculating winner...', 'info');
+        updateHandUI(dealer.hand, 'dealerCards', true); // show hidden card
         setTimeout(() => {
             while (calculateScore(dealer.hand) < 17) {
-                drawCardAndCalculateScore(dealer.hand, 'dealerCards');
+                dealCard(dealer.hand);
+                updateHandUI(dealer.hand, 'dealerCards', true);
             }
             checkWinner();
         }, 2000);
     }, 2000);
 }
 
-function handleCashOut() {
-    const currentPlayer = players[currentPlayerIndex];
-    if (currentPlayer.money > 0) {
-        // update leaderboard
-        updateLeaderboard(currentPlayer);
-        console.log('cashing out player: ', currentPlayer); // debugging
-        renderLeaderboard(leaderboard);
-        // display success msg
-        displayMessage('You have cashed out! Your score is saved to the leaderboard.', 'success');
-        // disable cash out button to prevent subsequent clicks, which doesnt do anything anyway
-        cashOutButton.disabled = true;
-        cashOutButton.classList.add('disabled');
-        console.log('cash-out button disabled');
-        // disable further actions of currentPlayer
-        disableGameControls();
-        //re-enabled reset button as only option for currentPlayer
-        resetButton.disabled = false;
-        resetButton.classList.remove('disabled');
-        // save leaderboard data to localStorage
-        saveLeaderboard();
-        nextPlayerTurn();
-    } else {
-        displayMessage('Cannot cash out with $0. Reset the game to play again', 'error');
+function checkAndAwardBlackjack(player) {
+    const playerScore = calculateScore(player.hand);
+    if (playerScore === 21 && player.hand.length === 2) {
+        player.money += player.currentBet * 2.5;
+        displayMessage(`${player.name} wins instantly with a Blackjack!`, 'success');
+        updateLeaderboard(player);
+        updateUI();
+        return true;
     }
+    return false;
 }
-
-// end round && reset for the next round
-function endRound() {
-    // reset first
-    betButton.disabled = false;
-    currentPlayer.bet = 0;
-    currentPlayer.hand = [];
-    dealer.hand = [];
-    deck = shuffleDeck(createDeck());
-    updateLeaderboard(currentPlayer);
-    console.log('leaderboard before rendering:', leaderboard); // Debugging
-    renderLeaderboard(leaderboard);
-    updateUI();
-    // UI prompt
-    if (!textPromptArea.textContent.includes('wins') && !textPromptArea.textContent.includes('tie')) {
-        displayMessage('Round ended. Place your bet to start the next round!', 'info');
-    }
-    currentMessage = '';
-    hitButton.disabled = true;
-    standButton.disabled = true;
-    betAmountInput.disabled = false;
-}
-window.endRound = endRound // step 5 test bet mechanics
-
 
 function checkWinner() {
-    console.log('checkWinner called'); // debugging
     const dealerScore = calculateScore(dealer.hand);
+    console.log('checkWinner called. dealer have:', dealerScore); // debugging
     players.forEach(player => {
         const playerScore = calculateScore(player.hand);
         if (player.isBusted) {
             displayMessage(`${player.name} busts! Dealer wins this round.`, 'error');
         } else if (dealerScore > 21 || playerScore > dealerScore) {
             player.money += player.currentBet * 2;
-            displayMessage(`${player.name} wins this round and earns ${formatMoney(player.currentBet) * 2}!`, 'success');
+            displayMessage(`${player.name} beats the dealer and earns ${formatMoney(player.currentBet * 2)}!`, 'success');
         } else if (playerScore === dealerScore) {
             player.money += player.currentBet;
             displayMessage(`It's a tie! ${player.name}'s bet is returned.`, 'info');
@@ -380,31 +337,46 @@ function resetRound() {
     betButton.disabled = false;
     hitButton.disabled = true;
     standButton.disabled = true;
+    currentPlayer = players[0];
+    updateCurrentPlayerUI();
 }
 
 function handleReset() {
-    console.log('Resetting the game...'); // debugging
-    players.forEach(player => {
-        player.money = initialMoney;
-        player.bet = 0;
-        player.hand = [];
-        player.isStanding = false;
-        player.isBusted = false;
-    });
+    console.log('resetting entire game...'); // debugging
+    // final leaderboard state
+    players.forEach(player => updateLeaderboard(player));
+    saveLeaderboard();
+    renderLeaderboard(leaderboard);
+    // clear state
+    players = [];
+    currentPlayerIndex = 0;
     dealer.hand = [];
     deck = shuffleDeck(createDeck());
-    updateUI();
-    console.log('Game reset successful.'); // debugging
     updateHandUI([], 'playerCards');
     updateHandUI([], 'dealerCards');
-    displayMessage('Game reset. Start a new round by placing your bet.', 'info');
-    resetGameControls();
-    if (nameInputContainer) {
-        nameInputContainer.style.display = 'flex';
-    }
-    currentMessage = '';
     updateUI();
+    displayMessage('Game fully reset. Set up players to start a new game.', 'info');
+    resetGameControls();
+    nameInputContainer.innerHTML = '';
+    startGameButton.style.display = 'none';
 }
+
+function handleCashOut() {
+    if (currentPlayer.money <= 0) {
+        return displayMessage('Cannot cash out with $0. Reset the game to play again', 'error');
+    }
+    updateLeaderboard(currentPlayer); // save currentPlayer to leaderboard
+    renderLeaderboard(leaderboard);
+    saveLeaderboard();
+    displayMessage(`${currentPlayer.name} has cashed out!`, 'success');
+    players.splice(currentPlayerIndex, 1); // remove currentPlayer from array so wont be included in future turns
+    currentPlayerIndex--; // move back 1 index so nextPlayerTurn dont skip
+    setTimeout(() => {
+        nextPlayerTurn();
+    }, 2000);
+}
+
+/*----------- UI Control Flow ----------*/
 
 function startGameControls() {
     playerSetupSection.style.display = 'none';
@@ -418,6 +390,7 @@ function startGameControls() {
     resetButton.disabled = true;
 }
 
+// after currentPlayer places bet
 function betGameControls() {
     betAmountInput.disabled = true;
     betButton.disabled = true;
@@ -427,17 +400,11 @@ function betGameControls() {
     resetButton.disabled = false;
 }
 
-// disable controls are cashing out
-function disableGameControls() {
-    betAmountInput.disabled = true;
-    betButton.disabled = true;
-    hitButton.disabled = true;
-    standButton.disabled = true;
-}
-
-// enable game controls after reset activates
+// show setup section, hide other controls
 function resetGameControls() {
     playerSetupSection.style.display = '';
+    bettingControls.style.display = 'none';
+    gameControls.style.display = 'none';
     startGameButton.disabled = false;
     betAmountInput.disabled = true;
     betButton.disabled = true;
@@ -445,22 +412,7 @@ function resetGameControls() {
     standButton.disabled = true;
     cashOutButton.disabled = true;
     resetButton.disabled = true;
-    displayMessage('Enter your name and click "Start Game" to begin.', 'info');
-}
-
-function checkAndAwardBlackjack(player) {
-    const playerScore = calculateScore(player.hand);
-    if (playerScore === 21 && player.hand.length === 2) {
-        player.money += player.currentBet * 2.5;
-        displayMessage(`${player.name} wins with a Blackjack!`, 'success');
-        updateLeaderboard(player);
-        updateUI();
-        setTimeout(() => {
-            nextPlayerTurn();
-        }, 3000);
-        return true;
-    }
-    return false;
+    displayMessage('Game fully reset. Set up players to start a new game.', 'info');
 }
 
 /*----------- Event Listeners ----------*/
@@ -470,7 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadLeaderboard(); // load from localStorage
     bettingControls.style.display = 'none';
     gameControls.style.display = 'none';
-    displayMessage('Welcome to Blackjack! Enter # players and click "Setup Players" to begin.', 'info');
+    displayMessage('Welcome to Blackjack! Select # players and click "Setup Players" to begin.', 'info');
 });
 
 startSetupButton.addEventListener('click', startSetup);
@@ -489,4 +441,4 @@ resetButton.addEventListener('click', handleReset);
 
 /*--------------- Exports --------------*/
 
-export {calculateScore, players, drawCardAndCalculateScore, currentPlayer, currentPlayerIndex, dealer};
+export {calculateScore, players, currentPlayer, currentPlayerIndex, dealer};
