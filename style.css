@@ -14,20 +14,13 @@ header {
     font-size: 24px;
 }
 
-header nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-}
-
 header img {
     height: 120px;
     width: auto;
     margin-right: 50px;
 }
 
-nav a {
+.nav-dropdown a {
     color: white;
     text-decoration: none;
     font-size: 18px;
@@ -35,12 +28,16 @@ nav a {
     margin-top: 80px;
 }
 
-nav a:not(:first-child) {
+.nav-dropdown a:not(:first-child) {
     margin-left: 20px;
 }
 
-nav a:not(:last-child) {
+.nav-dropdown a:not(:last-child) {
     margin-right: 20px;
+}
+
+.menu-toggle {
+    display: none;
 }
 
 #gameContainer {
@@ -52,6 +49,57 @@ nav a:not(:last-child) {
     box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2),
         0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
+}
+
+.playerSetup {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.playerSetup label {
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.playerSetup select {
+    border-radius: 6px;
+    background: #fff;
+    font-size: 16px;
+    padding: 5px;
+    color: black;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s;
+}
+
+.playerSetup select:focus {
+    outline: none;
+    border-color: #ffc107;
+}
+
+#startSetupButton {
+    background-color: #f200ff;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 20px;
+    margin-left: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#startSetupButton:hover {
+    background-color: #f600ff;
+    transform: translateY(-3px);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+    color: gold;
+    border: 2px solid rgb(247, 255, 2);
+    font-weight: bold;
 }
 
 #dealerArea, #playerArea {
@@ -346,4 +394,155 @@ nav a:not(:last-child) {
     color: #333;
     font-size: 19px;
     font-weight: 700;
+}
+
+/*----- Tablet size (max 768px)  -----*/
+
+@media (max-width: 768px) {
+    header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    header img {
+        margin-right: 0;
+        height: 80px;
+    }
+
+    .nav-dropdown {
+        display: none;
+        position: absolute;
+        top: 80%;
+        right: 10px;
+        background: #555555;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .nav-dropdown.show {
+        display: flex;
+    }
+
+    .nav-dropdown a {
+        margin: 5px 0;
+        text-align: left;
+        padding: 8px 15px;
+        font-size: 16px;
+    }
+
+    .menu-toggle {
+        display: block;
+        position: absolute;
+        right: 30px;
+        top: 25px;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 40px;
+        cursor: pointer;
+    }
+
+    .menu-toggle:hover {
+        color: yellow;
+        transform: scale(1.1);
+    }
+
+    #gameContainer {
+        width: 95%;
+        padding: 10px;
+    }
+
+    .cards {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    #leaderboardSection {
+        width: 95%;
+        padding: 10px;
+    }
+
+    .nameInput {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/*----- Mobile size (max 480px) -----*/
+
+@media (max-width: 480px) {
+    header {
+        flex-direction: column;
+        /* padding: 10px 0; */
+    }
+
+    header img {
+        height: 60px;
+    }
+
+    .menu-toggle {
+        top: auto;
+        bottom: 10px;
+        right: 20px;
+        font-size: 30px;
+    }
+
+    .nav-dropdown {
+        right: 0;
+        left: 0;
+        margin: 0 auto;
+        width: 80%;
+        border-radius: 5px;
+        align-items: center;
+    }
+
+    .nav-dropdown a {
+        font-size: 14px;
+        padding: 10px;
+        margin: 2px 0;
+    }
+
+    #gameContainer {
+        width: 95%;
+        padding: 10px;
+    }
+
+    .card {
+        width: 80px;
+    }
+
+    .cards {
+        gap: 5px;
+    }
+
+    #textPromptArea {
+        font-size: 16px;
+    }
+
+    .playerSetup {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .playerSetup select,
+    #startSetupButton {
+        width: 100%;
+    }
+    .gameControls {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    .gameControls button {
+        width: 90%;
+        max-width: 250px;
+        font-size: 20px;
+        padding: 14px 20px;
+        margin: 5px 0;
+    }
 }
