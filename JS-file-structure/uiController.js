@@ -62,6 +62,9 @@ function updateHandUI(hand, handElementId, revealAll = true) {
 }
 
 function updateUI() {
+    if (!currentPlayer) { // safeguard, resetgame bugfix after all players cashed out from players array
+        return;
+    }
     if (playerHand) {
         playerHand.textContent = `${currentPlayer.name}'s Hand:`;
     }
