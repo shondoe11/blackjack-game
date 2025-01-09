@@ -250,8 +250,15 @@ function handleStand() {
 }
 window.handleStand = handleStand;
 
-function nextPlayerTurn() {
-    currentPlayerIndex++;
+function nextPlayerTurn(skipIncrease = false) {
+    if (!skipIncrease) {
+        currentPlayerIndex++;
+    }
+    if (players.length === 0) { // check players array
+        displayMessage('No players left. Please reset game to set up new players.', 'error');
+        currentPlayer = null;
+        return;
+    }
     if (currentPlayerIndex >= players.length) {
         dealer.hand = [];
         dealCard(dealer.hand);
@@ -381,9 +388,18 @@ function showRoundResults(roundResults) {
 function removeBrokePlayers() {
     for (let i = players.length - 1; i >= 0; i--) { // scan backwards so splice(i,1) dont break iteration
         if (players[i].autoRemove) {
-            displayMessage(`${players[1].name} is out of money and removed from the game.`, 'error');
+            displayMessage(`${players[i].name} is out of money and removed from the game.`, 'error');
             players.splice(i, 1);
+            if (i === currentPlayerIndex) { // if currentPlayer removed = true
+                currentPlayerIndex--;
+                if (currentPlayerIndex < 0) currentPlayerIndex = 0;
+            }
         }
+    }
+    // players array check
+    if (players.length === 0) {
+        displayMessage('No players left. Please reset game to set up new players.', 'error');
+        currentPlayer = null;
     }
 }
 
@@ -400,6 +416,11 @@ function resetRound() {
     dealer.hand = [];
     updateHandUI([], 'dealerCards');
     updateHandUI([], 'playerCards');
+    if (players.length === 0) { // check players array
+        displayMessage('No players left. Please reset game to set up new players.', 'error');
+        currentPlayer = null;
+        return;
+    }
     updateUI();
     displayMessage('Round reset. Place your bets to start!', 'info');
     betAmountInput.disabled = false;
@@ -432,6 +453,7 @@ function handleReset() {
 }
 
 function handleCashOut() {
+    if (!currentPlayer) return; // safeguard for cashingout midround
     if (currentPlayer.money <= 0) {
         return displayMessage('Cannot cash out with $0. Reset the game to play again', 'error');
     }
@@ -440,9 +462,13 @@ function handleCashOut() {
     saveLeaderboard();
     displayMessage(`${currentPlayer.name} has cashed out!`, 'success');
     players.splice(currentPlayerIndex, 1); // remove currentPlayer from array so wont be included in future turns
-    currentPlayerIndex--; // move back 1 index so nextPlayerTurn dont skip
+    if (players.length === 0) { // additional check players array
+        displayMessage('No players left. Please reset game to set up new players.', 'error');
+        currentPlayer = null;
+        return;
+    }
     setTimeout(() => {
-        nextPlayerTurn();
+        nextPlayerTurn(true);
     }, 2000);
 }
 
