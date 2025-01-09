@@ -269,10 +269,10 @@ function nextPlayerTurn(skipIncrease = false) {
     }
     currentPlayer = players[currentPlayerIndex];
     updateCurrentPlayerUI(); // update UI for new current player
+    cashOutButton.disabled = false;
     betAmountInput.disabled = false;
     betButton.disabled = false;
     disableHitStand();
-    cashOutButton.disabled = false;
     displayMessage(`${currentPlayer.name}, it's your turn! Place bet.`, 'info');
 }
 
@@ -458,19 +458,20 @@ function handleCashOut() {
     if (currentPlayer.money <= 0) {
         return displayMessage('Cannot cash out with $0. Reset the game to play again', 'error');
     }
+    cashOutButton.disabled = true; // stop multiple clicks to cash out next players bug
     updateLeaderboard(currentPlayer); // save currentPlayer to leaderboard
     renderLeaderboard(leaderboard);
     saveLeaderboard();
     displayMessage(`${currentPlayer.name} has cashed out!`, 'success');
     players.splice(currentPlayerIndex, 1); // remove currentPlayer from array so wont be included in future turns
-    if (players.length === 0) { // additional check players array
-        displayMessage('No players left. Please reset game to set up new players.', 'error');
-        currentPlayer = null;
-        return;
-    }
     setTimeout(() => {
+        if (players.length === 0) { // additional check players array
+            displayMessage('No players left. Please reset game to set up new players.', 'error');
+            currentPlayer = null;
+            return;
+        }
         nextPlayerTurn(true);
-    }, 2000);
+    }, 2000)
 }
 
 /*----------- UI Control Flow ----------*/
