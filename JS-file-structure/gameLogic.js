@@ -272,6 +272,7 @@ function nextPlayerTurn(skipIncrease = false) {
     betAmountInput.disabled = false;
     betButton.disabled = false;
     disableHitStand();
+    cashOutButton.disabled = false;
     displayMessage(`${currentPlayer.name}, it's your turn! Place bet.`, 'info');
 }
 
@@ -288,7 +289,7 @@ function dealerTurn() {
                 updateHandUI(dealer.hand, 'dealerCards', true);
             }
             checkWinner();
-        }, 2000);
+        }, 1500);
     }, 2000);
 }
 
@@ -482,8 +483,8 @@ function startGameControls() {
     betButton.disabled = false;
     hitButton.disabled = true;
     standButton.disabled = true;
-    cashOutButton.disabled = true;
-    resetButton.disabled = true;
+    cashOutButton.disabled = false;
+    resetButton.disabled = false;
 }
 
 // after currentPlayer places bet
@@ -492,7 +493,7 @@ function betGameControls() {
     betButton.disabled = true;
     hitButton.disabled = false;
     standButton.disabled = false;
-    cashOutButton.disabled = false;
+    cashOutButton.disabled = true;
     resetButton.disabled = false;
 }
 
