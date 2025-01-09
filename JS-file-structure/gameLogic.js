@@ -135,7 +135,7 @@ function startSetup() {
     for (let i = 0; i < numPlayers; i++) {
         const nameInput = document.createElement('div');
         nameInput.innerHTML = `
-            <label for="playerName${i + 1}">Player ${i + 1} Name: </label>
+            <label for="playerName${i + 1}" style="color: yellow;">Player ${i + 1} Name: </label>
             <input type="text" id="playerName${i + 1}" placeholder="Player ${i + 1}">
         `;
         nameInputContainer.appendChild(nameInput);
@@ -212,6 +212,7 @@ function handleBet() {
     currentPlayer.isStanding = false;
     dealInitialCards(currentPlayer);
     updateCurrentPlayerUI();
+    enableHitStand();
     const playerScore = calculateScore(currentPlayer.hand);
     displayMessage(`Bet of ${formatMoney(betAmount)} placed. ${currentPlayer.name}'s score is ${playerScore}. Good luck!`, 'success');
     if (checkAndAwardBlackjack(currentPlayer)) {
@@ -230,8 +231,9 @@ function handleHit() {
     if (score > 21) {
         currentPlayer.isBusted = true;
         displayMessage(`${currentPlayer.name} busts with a score of ${score}.`, 'error');
+        disableHitStand();
         currentPlayer.currentBet = 0; // deduct bet here if needed
-        setTimeout(() => nextPlayerTurn(), 2000);
+        setTimeout(() => nextPlayerTurn(), 1500);
   } else {
     displayMessage(`${currentPlayer.name} hits! Score is now ${score}.`, 'info');
   }
@@ -243,6 +245,7 @@ function handleStand() {
     console.log(`${currentPlayer.name} chose to stand.`);
     currentPlayer.isStanding = true;
     displayMessage(`${currentPlayer.name} stands with a score of ${calculateScore(currentPlayer.hand)}.`, 'info');
+    disableHitStand();
     setTimeout(() => nextPlayerTurn(), 2000);
 }
 window.handleStand = handleStand;
@@ -261,14 +264,14 @@ function nextPlayerTurn() {
     updateCurrentPlayerUI(); // update UI for new current player
     betAmountInput.disabled = false;
     betButton.disabled = false;
-    hitButton.disabled = true;
-    standButton.disabled = true;
+    disableHitStand();
     displayMessage(`${currentPlayer.name}, it's your turn! Place bet.`, 'info');
 }
 
 function dealerTurn() {
     console.log('dealerTurn called'); // debugging
     displayMessage('Dealer reveals their cards...', 'info');
+    cashOutButton.disabled = true;
     // wait 2 second, reveal hidden card
     setTimeout(() => {
         updateHandUI(dealer.hand, 'dealerCards', true); // show hidden card
@@ -340,6 +343,11 @@ function checkWinner() {
             outcomeMsg,
             messageType
         });
+        player.currentBet = 0; // clear currentBet, round over
+        // auto-remove logic
+        if (player.money <= 0) {
+            player.autoRemove = true;
+        }
     });
     renderLeaderboard(players);
     showRoundResults(roundResults);
@@ -349,8 +357,10 @@ function showRoundResults(roundResults) {
     let i = 0; // result array index
     function showNext() {
         if (i >= roundResults.length) {
-            // reset if all player results already displayed
-            resetRound();
+            removeBrokePlayers(); // all msgs done, now then remove $0 players before reset
+            setTimeout(() => { // set to resetRound, so removeBrokePlayers message can run for 2s
+            resetRound(); // reset once all player results already displayed
+            }, 1500);
             return;
         }
         const result = roundResults[i];
@@ -363,9 +373,18 @@ function showRoundResults(roundResults) {
             updateCurrentPlayerUI(); // dynamically updates as messages cycle each player
         }
         i++;
-        setTimeout(showNext, 3000); // wait 2s each cycle
+        setTimeout(showNext, 2000); // wait 2s each cycle
     }
     showNext(); // start sequence
+}
+
+function removeBrokePlayers() {
+    for (let i = players.length - 1; i >= 0; i--) { // scan backwards so splice(i,1) dont break iteration
+        if (players[i].autoRemove) {
+            displayMessage(`${players[1].name} is out of money and removed from the game.`, 'error');
+            players.splice(i, 1);
+        }
+    }
 }
 
 function resetRound() {
@@ -387,6 +406,7 @@ function resetRound() {
     betButton.disabled = false;
     hitButton.disabled = true;
     standButton.disabled = true;
+    cashOutButton.disabled = false;
     currentPlayer = players[0];
     updateCurrentPlayerUI();
 }
@@ -448,6 +468,16 @@ function betGameControls() {
     standButton.disabled = false;
     cashOutButton.disabled = false;
     resetButton.disabled = false;
+}
+
+function disableHitStand() {
+    hitButton.disabled = true;
+    standButton.disabled = true;
+}
+
+function enableHitStand() {
+    hitButton.disabled = false;
+    standButton.disabled = false;
 }
 
 // show setup section, hide other controls
