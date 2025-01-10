@@ -65,6 +65,56 @@
             <ol id="leaderboardList"></ol>
         </section>
     </div>
+    <div id="aboutPopup" class="popup">
+        <div class="popup-content">
+            <span class="closeButton" id="closeAbout">&CircleTimes;</span>
+            <h2>About</h2>
+            <p>
+                Welcome to <strong>Blackjack</strong>, your digital gateway to the excitement and strategy of the classic
+                casino game! This game is built using modern web technologies including HTML, CSS, and JavaScript to deliver an
+                interactive and immersive experience. Whether you're a seasoned player or new to the game, Blackjack offers
+                an easy-to-learn but strategically rich gameplay experience.
+            </p>
+            <p>
+                Enjoy traditional Blackjack rules, dynamic betting options, and compete with friends or against an automated dealer.
+                Record your winnings on the persistent leaderboard and aim for the top 10 rankings!
+            </p>
+            <p>
+                Ready to play? Place your bets and test your skills in this timeless game of strategy and chance.
+            </p>
+        </div>
+    </div>
+    <div id="rulesPopup" class="popup">
+        <div class="popup-content">
+            <span class="closeButton" id="closeRules">&CircleTimes;</span>
+            <h2>Rules</h2>
+            <p>
+                <strong>Objective:</strong> The goal of Blackjack is to beat the dealer's hand without exceeding a total of 21.
+                Players compete to get closer to 21 than the dealer while avoiding going "bust" (exceeding 21).
+            </p>
+            <p>
+                <strong>How to Play:</strong><br>
+                - Each player starts with $5000 and places a minimum bet of $50 per round.<br>
+                - Players are dealt two cards face-up, while the dealer receives one card face-up and one face-down.<br>
+                - Players can choose to "Hit" (take another card) or "Stand" (keep their current hand). The dealer must "Hit" if
+                their hand total is less than 17 and "Stand" on 17 or higher.
+            </p>
+            <p>
+                <strong>Winning and Losing:</strong><br>
+                - Win if your hand total is closer to 21 than the dealer's without exceeding 21.<br>
+                - Lose if your total exceeds 21 or the dealer has a higher hand without busting.<br>
+                - Blackjack (Ace + 10-value card on the initial deal) pays 3:2.<br>
+                - A tie ("Standoff") results in the return of your bet.
+            </p>
+            <p>
+                <strong>Leaderboard:</strong> Cash out your winnings at any time to record your score on the persistent leaderboard,
+                where the top 10 players are displayed. Resetting the game will not affect leaderboard rankings.
+            </p>
+            <p>
+                Test your strategy, place your bets, and enjoy the thrill of Blackjack!
+            </p>
+        </div>
+    </div>
     <script src="JS-file-structure/player.js" type="module"></script>
     <script src="JS-file-structure/deck.js" type="module"></script>
     <script src="JS-file-structure/gameLogic.js" type="module"></script>
