@@ -24,6 +24,18 @@ const playerScore = document.getElementById('playerScore');
 
 const dealerScore = document.getElementById('dealerScore');
 
+const aboutLink = document.querySelector('#about');
+
+const aboutPopup = document.querySelector('#aboutPopup');
+
+const closeAbout = document.querySelector('#closeAbout');
+
+const rulesLink = document.querySelector('#rules');
+
+const rulesPopup = document.querySelector('#rulesPopup');
+
+const closeRules = document.querySelector('#closeRules');
+
 /*-------------- Functions -------------*/
 
 function updateCurrentPlayerUI() {
@@ -95,6 +107,24 @@ function formatMoney(value) {
 document.querySelector('.menu-toggle').addEventListener('click', () => {
     const dropdown = document.querySelector('.nav-dropdown');
     dropdown.classList.toggle('show');
+});
+
+aboutLink.addEventListener('click', (event) => {
+    event.preventDefault(); // if the event does not get explicitly handled, its default action should not be taken as it normally would be.
+    aboutPopup.style.display = 'flex'; // show popup
+});
+
+closeAbout.addEventListener('click', () => {
+    aboutPopup.style.display = 'none';
+});
+
+rulesLink.addEventListener('click', (event) => {
+    event.preventDefault();
+    rulesPopup.style.display = 'flex';
+});
+
+closeRules.addEventListener('click', () => {
+    rulesPopup.style.display = 'none';
 });
 
 /*--------------- Exports --------------*/
