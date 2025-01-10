@@ -303,8 +303,6 @@ header img {
 
 #cashOutButton span, #resetButton span,
 #startGameButton span {
-    /* remove for now,conflicting with #cashOutButton:disabled effect */
-    /* cursor: pointer;  */
     display: inline-block;
     position: relative;
     transition: 0.5s;
@@ -394,6 +392,47 @@ header img {
     color: #333;
     font-size: 19px;
     font-weight: 700;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    position: relative;
+    background: #333;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.closeButton {
+    position: absolute;
+    top: -2px;
+    right: 20px;
+    font-size: 40px;
+    font-weight: bold;
+    color: yellow;
+    cursor: pointer;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.closeButton:hover {
+    color: red;
+    transform: rotate(360deg) scale(1.5);
 }
 
 /*----- Tablet size (max 768px)  -----*/
