@@ -216,7 +216,7 @@ function handleBet() {
     const playerScore = calculateScore(currentPlayer.hand);
     displayMessage(`Bet of ${formatMoney(betAmount)} placed. ${currentPlayer.name}'s score is ${playerScore}. Good luck!`, 'success');
     if (checkAndAwardBlackjack(currentPlayer)) {
-    setTimeout(() => nextPlayerTurn(), 2000);
+    setTimeout(() => nextPlayerTurn(), 1500);
     return;
     }
     betGameControls();
@@ -246,7 +246,7 @@ function handleStand() {
     currentPlayer.isStanding = true;
     displayMessage(`${currentPlayer.name} stands with a score of ${calculateScore(currentPlayer.hand)}.`, 'info');
     disableHitStand();
-    setTimeout(() => nextPlayerTurn(), 2000);
+    setTimeout(() => nextPlayerTurn(), 1500);
 }
 window.handleStand = handleStand;
 
@@ -256,6 +256,8 @@ function nextPlayerTurn(skipIncrease = false) {
     }
     if (players.length === 0) { // check players array
         displayMessage('No players left. Please reset game to set up new players.', 'error');
+        betAmountInput.disabled = true;
+        betButton.disabled = true;
         currentPlayer = null;
         return;
     }
@@ -280,7 +282,7 @@ function dealerTurn() {
     console.log('dealerTurn called'); // debugging
     displayMessage('Dealer reveals their cards...', 'info');
     cashOutButton.disabled = true;
-    // wait 2 second, reveal hidden card
+    // wait a little, reveal hidden card
     setTimeout(() => {
         updateHandUI(dealer.hand, 'dealerCards', true); // show hidden card
         setTimeout(() => {
@@ -290,7 +292,7 @@ function dealerTurn() {
             }
             checkWinner();
         }, 1500);
-    }, 2000);
+    }, 1500);
 }
 
 function checkAndAwardBlackjack(player) {
@@ -381,7 +383,7 @@ function showRoundResults(roundResults) {
             updateCurrentPlayerUI(); // dynamically updates as messages cycle each player
         }
         i++;
-        setTimeout(showNext, 2000); // wait 2s each cycle
+        setTimeout(showNext, 1500); // wait 2s each cycle
     }
     showNext(); // start sequence
 }
@@ -400,6 +402,8 @@ function removeBrokePlayers() {
     // players array check
     if (players.length === 0) {
         displayMessage('No players left. Please reset game to set up new players.', 'error');
+        betAmountInput.disabled = true;
+        betButton.disabled = true;
         currentPlayer = null;
     }
 }
@@ -419,6 +423,8 @@ function resetRound() {
     updateHandUI([], 'playerCards');
     if (players.length === 0) { // check players array
         displayMessage('No players left. Please reset game to set up new players.', 'error');
+        betAmountInput.disabled = true;
+        betButton.disabled = true;
         currentPlayer = null;
         return;
     }
@@ -467,11 +473,13 @@ function handleCashOut() {
     setTimeout(() => {
         if (players.length === 0) { // additional check players array
             displayMessage('No players left. Please reset game to set up new players.', 'error');
+            betAmountInput.disabled = true;
+            betButton.disabled = true;
             currentPlayer = null;
             return;
         }
         nextPlayerTurn(true);
-    }, 2000)
+    }, 1500)
 }
 
 /*----------- UI Control Flow ----------*/
